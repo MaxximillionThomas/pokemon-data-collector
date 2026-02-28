@@ -205,3 +205,35 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# --- AWS & Cloud Bricks ---
+.aws/
+.serverless/
+terraform.tfstate*
+# If you use AWS SAM or CDK later:
+.aws-sam/
+cdk.out/
+
+# --- Frontend & Node Bricks ---
+# Standard for any JS dependencies used for GitHub Pages
+node_modules/
+.DS_Store
+
+# --- Project Specific ---
+# Ignore the actual local data files you download
+pokemon_data_raw/
+*.sqlite3
+
+# --- Frontend (Node/React/Vite) Additions ---
+# The /dist folder is the output of your npm run build command
+# It should not be tracked, as it's generated from src/ code
+/frontend/dist/
+/frontend/.vite/
+/frontend/.npm/
+
+# --- Environment & Local Secrets ---
+# Crucial for potential API keys for AWS or PokeAPI
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
