@@ -8,6 +8,7 @@ Date:           February 28, 2026
 """
 
 import requests
+import json
 
 def fetch_pokemon_overview(pokemon):
     """
@@ -36,3 +37,33 @@ def fetch_pokemon_overview(pokemon):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data: {e}")
         return None
+
+def save_to_storage(pokemon_name, data):
+    """
+    Save the PokeApi data for a specific Pokemon as a JSON file for future referencing.
+    """
+    # Create a new JSON file
+    file_name = f"{pokemon_name}.json"
+
+    # Write the data to it
+    with open(file_name, 'w') as write_file:
+        json.dump(data, write_file)
+
+    # This line should always execute if the data is validated before function call
+    print(f"Successfully saved {file_name}")
+
+
+
+#############
+# Quick test
+#############
+pidgey_data = fetch_pokemon_overview("pidgey")
+
+if (pidgey_data): 
+    # Save the data to the JSON file
+    save_to_storage("pidgey", pidgey_data)
+
+    # Review the new JSON file data
+    with open("pidgey.json", 'r') as read_file:
+        data = json.load(read_file)
+        print(data)
