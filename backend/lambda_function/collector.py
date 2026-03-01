@@ -36,19 +36,3 @@ def fetch_pokemon_overview(pokemon):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data: {e}")
         return None
-    
-
-
-# ##########
-# Quick test
-# ##########
-
-print("Attempting to fetch overview data for Mew...")
-mew_overview = fetch_pokemon_overview("mew")
-
-if (mew_overview):
-    print("Success!")
-    print(mew_overview)
-
-else:
-    print("Failure")

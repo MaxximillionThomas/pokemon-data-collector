@@ -7,13 +7,22 @@
  * @date          February 28, 2026
  */
 
-import React from 'react';
+import { PokemonCard } from './components/PokemonCard';
 
 function App() {
+  // Quick test
+  const bulbasaur = {
+    id: 1,
+    name: "Bulbasaur",
+    types: ["grass"],
+    sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
+  }
+
   return (
     <div className="container mt-5">
       <h1>Pokémon Data Collector</h1>
-      <p>Web page functioning.</p>
+      {/* Quick test */}
+      <PokemonCard pokemon={bulbasaur}/>
     </div>
   );
 }
