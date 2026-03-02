@@ -9,13 +9,23 @@ Date:           February 28, 2026
 
 import requests
 import json
+import boto3
 
-def fetch_pokemon_overview(pokemon):
+# ==========  Declarations  ==========
+
+# Define the S3 session constants
+SESSION = boto3.Session(profile_name='pokemon-writer')
+S3 = SESSION.client('s3')
+BUCKET_NAME = 'pokemon-data-collector-s3'
+
+# ==========  Functions  ==========
+
+def fetch_pokemon_overview(pokemon_id):
     """
     Fetch and filter the overview data for a specific Pokemon.
     """
     # Inject the target pokemon into the pokeapi link
-    url = f"https://pokeapi.co/api/v2/pokemon/{pokemon.lower()}"
+    url = f'https://pokeapi.co/api/v2/pokemon/{pokemon_id}'
 
     # Request the data, attempting to parse the response and map it to desired pairs
     try:
@@ -26,44 +36,47 @@ def fetch_pokemon_overview(pokemon):
 
         # Map the data
         overview_data = {
-            "id": raw_data["id"],
-            "name": raw_data["name"],
-            "types": [t["type"]["name"] for t in raw_data["types"]],
-            "sprite": raw_data["sprites"]["front_default"]
+            'id': raw_data['id'],
+            'name': raw_data['name'],
+            'types': [t['type']['name'] for t in raw_data['types']],
+            'sprite': raw_data['sprites']['front_default']
         }
         return overview_data        
 
     # If unsuccessful, print the error message to the terminal
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching data: {e}")
+        print(f'Error fetching data: {e}.')
         return None
 
-def save_to_storage(pokemon_name, data):
+def save_to_storage(pokemon_id, data):
     """
-    Save the PokeApi data for a specific Pokemon as a JSON file for future referencing.
+    Save the PokeApi data for a specific Pokemon as a JSON file, pushing it to S3 cloud storage for future referencing.
     """
-    # Create a new JSON file
-    file_name = f"{pokemon_name}.json"
+    # Define the storage path and name for the new JSON file
+    file_name = f'pokemon-data/{pokemon_id}.json'
 
-    # Write the data to it
-    with open(file_name, 'w') as write_file:
-        json.dump(data, write_file)
+    # Upload the data to S3 bucket
+    try:
+        S3.put_object(
+            Bucket=BUCKET_NAME,
+            Key=file_name,
+            Body=json.dumps(data),
+            ContentType='application/json'
+        )
+        print(f'Successfully saved {file_name} to {BUCKET_NAME}.')
 
-    # This line should always execute if the data is validated before function call
-    print(f"Successfully saved {file_name}")
-
+    except Exception as e:
+        print(f'Failed to upload to S3: {e}.')
 
 
 #############
 # Quick test
 #############
-pidgey_data = fetch_pokemon_overview("pidgey")
+mewtwo_index = 150
 
-if (pidgey_data): 
-    # Save the data to the JSON file
-    save_to_storage("pidgey", pidgey_data)
+# Fetch the Mewtwo overview data
+mewtwo_data = fetch_pokemon_overview(mewtwo_index)
 
-    # Review the new JSON file data
-    with open("pidgey.json", 'r') as read_file:
-        data = json.load(read_file)
-        print(data)
+if (mewtwo_data): 
+    # Save the data to the JSON file and upload it
+    save_to_storage(mewtwo_index, mewtwo_data)
