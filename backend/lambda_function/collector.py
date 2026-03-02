@@ -10,6 +10,7 @@ Date:           February 28, 2026
 import requests
 import json
 import boto3
+import time
 
 # ==========  Declarations  ==========
 
@@ -68,15 +69,28 @@ def save_to_storage(pokemon_id, data):
     except Exception as e:
         print(f'Failed to upload to S3: {e}.')
 
+def upload_all_pokemon(limit): 
+    """
+    Iterate through the first *limit* Pokemon in PokeApi, fetching and uploading the data for each to S3.
+    """
+    for pokemon_id in range(1, limit + 1):
+        print(f'Processing data for Pokemon Id: {pokemon_id}...')
+        
+        # Fetch the data
+        data = fetch_pokemon_overview(pokemon_id)
 
-#############
-# Quick test
-#############
-mewtwo_index = 150
+        # Push it to the cloud
+        if (data):
+            save_to_storage(pokemon_id, data)
 
-# Fetch the Mewtwo overview data
-mewtwo_data = fetch_pokemon_overview(mewtwo_index)
+        # Pause briefly between each request to respect API rate limits
+        time.sleep(0.5)
 
-if (mewtwo_data): 
-    # Save the data to the JSON file and upload it
-    save_to_storage(mewtwo_index, mewtwo_data)
+    # Inform the user of the completion status
+    print('Uploading complete!')
+
+# ==========  Execution  ==========
+
+if __name__ == '__main__':
+    upload_all_pokemon(151)
+
