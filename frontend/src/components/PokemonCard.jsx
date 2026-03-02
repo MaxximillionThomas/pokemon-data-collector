@@ -11,12 +11,13 @@ import { Card, Badge } from 'react-bootstrap';
 
 /**
  * Renders a Pokemon card with overview information.
- * * @param {Object} props - The component props.
+ * @param {Object} props - The component props.
  * @param {Object} props.pokemon - The pokemon data object.
  * @param {number} props.pokemon.id - The unique ID.
  * @param {string} props.pokemon.name - The name of the Pokemon.
  * @param {string[]} props.pokemon.types - List of Pokemon types.
  * @param {string} props.pokemon.sprite - URL to the Pokemon sprite.
+ * @returns {JSX.Element} The rendered Pokemon card component.
  */
 export function PokemonCard({ pokemon }) {
     return (

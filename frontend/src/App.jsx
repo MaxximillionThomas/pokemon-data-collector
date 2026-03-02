@@ -7,12 +7,12 @@
  * @date          February 28, 2026
  */
 
-import { PokemonCard } from './components/PokemonCard';
+import { PokemonList } from './components/PokemonList';
 import { useEffect, useState } from 'react';
 
 function App() {
   // Control which Pokemon are to populate the overview page
-  const [pokemon, setPokemon] = useState(null);
+  const [pokemonArray, setPokemonArray] = useState([]);
 
   // Keep the user updated on the loading status of the application
   const [loading, setLoading] = useState(true);
@@ -20,38 +20,44 @@ function App() {
   // On first load, ALL Pokemon should be visible 
   // HOWEVER, right now we only have the Card component set up, and no map function yet to an array of PokemonCards (!!! come back !!!)
   useEffect(() => {
-    // Target the CloudFront distribution for the S3 bucket (only bulbasaur - temporarily manually created - right now per the above)
-    const CLOUDFRONT_URL = 'https://d1xb64xlhesy7f.cloudfront.net/bulbasaur.json';
+    // // Target the CloudFront distribution for the S3 bucket (only bulbasaur - temporarily manually created - right now per the above)
+    // const CLOUDFRONT_URL = 'https://d1xb64xlhesy7f.cloudfront.net/bulbasaur.json';
 
-    // Fetch the data from cloud storage
-    fetch(CLOUDFRONT_URL)
-      // If the HTTP response is ok, return it for data handling
-      .then((response) => {
-        if (!response.ok) {
-          // Create a custom error message and throw it to the 'catch' block
-          const error = new Error(`Status ${response.status}`);
-          error.type = 'HTTP_ERROR';
-          throw error;
-        }
+    // // Fetch the data from cloud storage
+    // fetch(CLOUDFRONT_URL)
+    //   // If the HTTP response is ok, return it for data handling
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       // Create a custom error message and throw it to the 'catch' block
+    //       const error = new Error(`Status ${response.status}`);
+    //       error.type = 'HTTP_ERROR';
+    //       throw error;
+    //     }
 
-        return response.json();
-      })
+    //     return response.json();
+    //   })
 
-      // Use the response data (Pokemon overview JSON data) to set the Pokemon state object
-      .then ((data) => {
-        setPokemon(data);
-      })
+    //   // Use the response data (Pokemon overview JSON data) to set the Pokemon state object
+    //   .then ((data) => {
+    //     setPokemon(data);
+    //   })
 
-      // The response was NOT ok
-      .catch((error) => {
-        // Handle HTTP status errors (e.g., 404, 500) thrown in 'then' block
-        if (error.type === 'HTTP_ERROR') {
-          console.log(`API request failed with status code: ${error.message}.`);
-        // Handle connectivity, DNS, or security/CORS failures
-        } else {
-          console.log('Network or CORS issue. Check CloudFront/S3 policy.');
-        }
-      });
+    //   // The response was NOT ok
+    //   .catch((error) => {
+    //     // Handle HTTP status errors (e.g., 404, 500) thrown in 'then' block
+    //     if (error.type === 'HTTP_ERROR') {
+    //       console.log(`API request failed with status code: ${error.message}.`);
+    //     // Handle connectivity, DNS, or security/CORS failures
+    //     } else {
+    //       console.log('Network or CORS issue. Check CloudFront/S3 policy.');
+    //     }
+    //   });
+
+      setPokemonArray([
+        { id: 1, name: 'Bulbasaur', types: ['grass', 'poison'], sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png' },
+        { id: 2, name: 'Ivysaur', types: ['grass', 'poison'], sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png' },
+        { id: 3, name: 'Venusaur', types: ['grass', 'poison'], sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png' }
+      ])
 
       // Loading message shown until state object set to false
       setLoading(false);
@@ -68,8 +74,8 @@ function App() {
       // Display loading message until fetch complete
         <p>Fetching data...</p>
       // Fetch success
-      ) : pokemon ? (
-        <PokemonCard pokemon={pokemon}/>
+      ) : pokemonArray.length > 0 ? (
+        <PokemonList pokemonArray={pokemonArray}/>
       // Fetch failure
       ) : (
         <p>Failed to fetch Pokemon data.</p>
