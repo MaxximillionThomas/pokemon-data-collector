@@ -8,7 +8,7 @@
  */
 
 import { PokemonList } from './components/PokemonList';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function App() {
   // Control which Pokemon are to populate the overview page
@@ -17,51 +17,53 @@ function App() {
   // Keep the user updated on the loading status of the application
   const [loading, setLoading] = useState(true);
 
-  // On first load, ALL Pokemon should be visible 
-  // HOWEVER, right now we only have the Card component set up, and no map function yet to an array of PokemonCards (!!! come back !!!)
+  // Prevent double-rendering
+  const hasFetched = useRef(false);
+
+  // On first load, ALL Pokemon should be visible -> hydrate from S3
   useEffect(() => {
-    // // Target the CloudFront distribution for the S3 bucket (only bulbasaur - temporarily manually created - right now per the above)
-    // const CLOUDFRONT_URL = 'https://d1xb64xlhesy7f.cloudfront.net/bulbasaur.json';
+    // Prevent double-rendering
+    if (hasFetched.current) return;
+    hasFetched.current = true;
 
-    // // Fetch the data from cloud storage
-    // fetch(CLOUDFRONT_URL)
-    //   // If the HTTP response is ok, return it for data handling
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       // Create a custom error message and throw it to the 'catch' block
-    //       const error = new Error(`Status ${response.status}`);
-    //       error.type = 'HTTP_ERROR';
-    //       throw error;
-    //     }
+    // Use an async function to handle individual Pokemon data fetches
+    const loadPokedex = async () => {
+      // Target the CloudFront distribution for the S3 bucket 
+      const CLOUDFRONT_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-data/';
 
-    //     return response.json();
-    //   })
+      // Iterate through each Pokemond Id up to the limit of 151 (data files are saved in the format '#.json')
+      for (let pokemon_id = 1; pokemon_id <= 151; pokemon_id++) {
+        try {
+          const response = await fetch(`${CLOUDFRONT_URL}${pokemon_id}.json`);
+          
+          // Handle fetch failure (1/2)
+          if (!response.ok) {
+            const error = new Error(`Status ${response.status}`);
+            error.type = 'HTTP_ERROR';
+            throw error;
+          }
 
-    //   // Use the response data (Pokemon overview JSON data) to set the Pokemon state object
-    //   .then ((data) => {
-    //     setPokemon(data);
-    //   })
+          // On fetch success, read the (Pokemon) data as JSON and push it to the state array
+          const data = await response.json();
+          setPokemonArray(prev => [...prev, data]);
 
-    //   // The response was NOT ok
-    //   .catch((error) => {
-    //     // Handle HTTP status errors (e.g., 404, 500) thrown in 'then' block
-    //     if (error.type === 'HTTP_ERROR') {
-    //       console.log(`API request failed with status code: ${error.message}.`);
-    //     // Handle connectivity, DNS, or security/CORS failures
-    //     } else {
-    //       console.log('Network or CORS issue. Check CloudFront/S3 policy.');
-    //     }
-    //   });
+          // After the first update, stop the loading state
+          if (pokemon_id === 1) setLoading(false);
+          
+        // Handle fetch failure (2/2)
+        } catch (error) {
+          // Handle HTTP status errors (e.g., 404, 500) thrown in 'then' block
+          if (error.type === 'HTTP_ERROR') {
+            console.log(`API request failed with status code: ${error.message}.`);
+          // Handle connectivity, DNS, or security/CORS failures
+          } else {
+            console.log('Network or CORS issue. Check CloudFront/S3 policy.');
+          }
+        }
+      }
+    };
 
-      setPokemonArray([
-        { id: 1, name: 'Bulbasaur', types: ['grass', 'poison'], sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png' },
-        { id: 2, name: 'Ivysaur', types: ['grass', 'poison'], sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png' },
-        { id: 3, name: 'Venusaur', types: ['grass', 'poison'], sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png' }
-      ])
-
-      // Loading message shown until state object set to false
-      setLoading(false);
-
+    loadPokedex();
   // Run only on first load of the web application
   }, []);
 
@@ -69,7 +71,6 @@ function App() {
     <div className="container mt-5">
       <h1>Pokémon Data Collector</h1>
 
-      {/* Quick test - to replace PokemonCard with PokemonList (array of PokemonCards) */}
       {loading ? (
       // Display loading message until fetch complete
         <p>Fetching data...</p>
