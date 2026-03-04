@@ -21,7 +21,7 @@ import { Card, Badge } from 'react-bootstrap';
  */
 export function PokemonCard({ pokemon, onSelect }) {
     return (
-        <Card style={{ width: '18rem', margin: '10px' }} onClick={() => onSelect(pokemon)}>
+        <Card style={{ width: '12rem', margin: '10px' }} onClick={() => onSelect(pokemon)}>
             {/* Sprite */}
             <Card.Img variant="top" src={pokemon.spriteFront} alt={pokemon.name} />
             <Card.Body>

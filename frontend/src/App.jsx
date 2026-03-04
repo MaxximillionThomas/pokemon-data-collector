@@ -20,11 +20,17 @@ function App() {
   const [sortKey, setSortKey] = useState('name');
   const [sortDir, setSortDir] = useState('asc');
   
-  // Pokemon display
+  // Overview / detailed views
   const [pokemonArray, setPokemonArray] = useState([]);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+
+  // Rendering support
   const [loading, setLoading] = useState(true);
   const hasFetched = useRef(false);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // ==========  Data fetching  ==========
 
@@ -121,6 +127,30 @@ function App() {
   // Run on change of the filtered result set or sort parameters
   }, [filtered, sortKey, sortDir]);
 
+  // ==========  Pagination  ==========
+
+  // Slice the results to meet the 'results per page' limit
+  const totalPages = Math.ceil(displayedPokemon.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedPokemon = displayedPokemon.slice(startIndex, startIndex + itemsPerPage);
+
+  // Determine new page numbers (5 shown at a time)
+  const pageNumbers = useMemo(() => {
+      let start = Math.max(1, currentPage - 2);
+      let end = Math.min(totalPages, start + 4);
+      
+      if (end - start < 4) {
+        start = Math.max(1, end - 4);
+      }
+      
+      let pages = [];
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      return pages;
+    // Run on change of current page or result set
+    }, [currentPage, totalPages]);
+
   // ==========  Rendering  ==========
 
   return (
@@ -149,10 +179,42 @@ function App() {
 
       // Overview page
       ) : pokemonArray.length > 0 ? (
-        <PokemonList 
-          pokemonArray={displayedPokemon}
-          onSelect={setSelectedPokemon}
-        />
+        <div>
+          {/* Page controls */}
+          <nav>
+            <ul className="pagination">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                Prev
+              </button>
+              
+              {pageNumbers.map(page => (
+                <button 
+                  key={page} 
+                  onClick={() => setCurrentPage(page)}
+                  className={currentPage === page ? 'active' : ''}
+                >
+                  {page}
+                </button>
+              ))}
+              
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </ul>
+          </nav>
+
+          {/* Result set */}
+          <PokemonList 
+            pokemonArray={paginatedPokemon}
+            onSelect={setSelectedPokemon}
+          />
+        </div>
 
       // Fetch failure
       ) : (
