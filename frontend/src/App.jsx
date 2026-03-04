@@ -1,18 +1,21 @@
 /**
  * Project:       Pokemon Data Collector
  * File:          App.jsx
- * @purpose       Frontend entry point for visualizing cloud-hosted Pokemon data.
  * @description   Main application layout and component routing.
  * @author        Maxximillion Thomas
  * @date          February 28, 2026
  */
 
 import { PokemonList } from './components/PokemonList';
+import { PokemonDetail } from './components/PokemonDetail';
 import { useEffect, useRef, useState } from 'react';
 
 function App() {
   // Control which Pokemon are to populate the overview page
   const [pokemonArray, setPokemonArray] = useState([]);
+
+  // Track which Pokemon is in selection
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
 
   // Keep the user updated on the loading status of the application
   const [loading, setLoading] = useState(true);
@@ -74,9 +77,18 @@ function App() {
       {loading ? (
       // Display loading message until fetch complete
         <p>Fetching data...</p>
+
+      ): selectedPokemon ? (
+        <div>
+            <button onClick={() => setSelectedPokemon(null)}>Back to list</button>
+            <PokemonDetail pokemon={selectedPokemon} />
+        </div>
       // Fetch success
       ) : pokemonArray.length > 0 ? (
-        <PokemonList pokemonArray={pokemonArray}/>
+        <PokemonList 
+          pokemonArray={pokemonArray}
+          onSelect={setSelectedPokemon}
+        />
       // Fetch failure
       ) : (
         <p>Failed to fetch Pokemon data.</p>

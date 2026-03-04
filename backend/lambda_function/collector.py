@@ -46,8 +46,8 @@ def fetch_pokemon_data(pokemon_id):
             'id': main_data['id'],
             'name': main_data['name'],
             'types': [t['type']['name'] for t in main_data['types']],
-            'sprite-front': main_data['sprites']['front_default'],
-            'sprite-back': main_data['sprites']['back_default'], 
+            'spriteFront': main_data['sprites']['front_default'],
+            'spriteBack': main_data['sprites']['back_default'], 
             'abilities': [a['ability']['name'] for a in main_data['abilities']],
             # Moves that the Pokemon learns 
             'learnset': [

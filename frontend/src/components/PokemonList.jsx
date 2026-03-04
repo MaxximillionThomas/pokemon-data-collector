@@ -1,7 +1,6 @@
 /**
  * Project:         Pokemon Data Collector
  * File:            PokemonList.jsx
- * @purpose         Render a grid of Pokemon cards based on an array of Pokemon data.
  * @description     Maps through the array of Pokemon data and renders individual PokemonCard components.
  * @author          Maxximillion Thomas
  * @date            March 2, 2026
@@ -10,19 +9,21 @@
 import { PokemonCard } from './PokemonCard';
 
 /**
- * Renders a list of Pokémon cards based on an array of Pokémon data.
+ * Renders a list of Pokemon cards based on an array of Pokemon data.
  * @param {Object} props - The component props.
- * @param {Array<Object>} props.pokemonArray - An array of Pokémon data objects.
- * @param {number} props.pokemonArray[].id - The unique identifier for the Pokémon.
- * @param {string} props.pokemonArray[].name - The name of the Pokémon.
- * @param {string} props.pokemonArray[].sprite - The URL to the Pokémon's sprite image.
- * @returns {JSX.Element} A grid or list of PokemonCard components.
+ * @param {Array<Object>} props.pokemonArray - An array of Pokemon data objects.
+ * @param {Function} props.onSelect - Callback function to handle selecting a Pokemon for the detail view.
+ * @returns {JSX.Element} An array of PokemonCard components.
  */
-export function PokemonList({ pokemonArray }) {
+export function PokemonList({ pokemonArray, onSelect }) {
   return (
     <div className='row'>
       {pokemonArray.map((pokemon) => (
-        <PokemonCard key={pokemon.id} pokemon={pokemon} />
+        <PokemonCard 
+          key={pokemon.id} 
+          pokemon={pokemon} 
+          onSelect={onSelect}
+        />
       ))}
     </div>
   );

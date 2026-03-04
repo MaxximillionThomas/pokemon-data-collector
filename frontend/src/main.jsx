@@ -1,7 +1,6 @@
 /**
  * Project:       Pokemon Data Collector
  * File:          main.jsx
- * @purpose       Bootstrap-integrated entry point for the React application.
  * @description   Mounts the App component to the DOM.
  * @author        Maxximillion Thomas
  * @date          February 28, 2026
