@@ -8,20 +8,25 @@
 
 import { PokemonList } from './components/PokemonList';
 import { PokemonDetail } from './components/PokemonDetail';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
+import { toTitleCase } from './utils/helpers';
+import { Toolbar } from './components/Toolbar';
 
 function App() {
-  // Control which Pokemon are to populate the overview page
+  // ==========  Use states  ==========
+
+  // Toolbar
+  const [query, setQuery] = useState('');
+  const [sortKey, setSortKey] = useState('name');
+  const [sortDir, setSortDir] = useState('asc');
+  
+  // Pokemon display
   const [pokemonArray, setPokemonArray] = useState([]);
-
-  // Track which Pokemon is in selection
   const [selectedPokemon, setSelectedPokemon] = useState(null);
-
-  // Keep the user updated on the loading status of the application
   const [loading, setLoading] = useState(true);
-
-  // Prevent double-rendering
   const hasFetched = useRef(false);
+
+  // ==========  Data fetching  ==========
 
   // On first load, ALL Pokemon should be visible -> hydrate from S3
   useEffect(() => {
@@ -70,25 +75,85 @@ function App() {
   // Run only on first load of the web application
   }, []);
 
+  // ==========  Filtering + sorting  ==========
+
+  // Normalize the searchbar query
+  const normalized = query.trim().toLowerCase();
+
+  // Filter the overview results per the query
+  const filtered = useMemo(() => {
+    return pokemonArray.filter((pokemon) => {
+      // A query must exist to filter results
+      if (!normalized) return true;
+
+      // Check name and Id for partial match
+      const inName = pokemon.name.toLowerCase().includes(normalized);
+      const inId = pokemon.id.toString().includes(normalized);
+
+      return inName || inId;
+    });
+  // Run on change of the result set or query
+  }, [pokemonArray, normalized]);
+
+  // Sort the filtered results
+  const displayedPokemon = useMemo(() => {
+    const copy = [...filtered];
+
+    // Build the sort parameter (e.g., "nameAsc", "idDesc")
+    const sort = sortKey + toTitleCase(sortDir);
+
+    switch (sort) {
+      case "nameAsc":
+        copy.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "nameDesc":
+        copy.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "idAsc":
+        copy.sort((a, b) => a.id - b.id);
+        break;
+      case "idDesc":
+        copy.sort((a, b) => b.id - a.id);
+        break;
+    }
+
+    return copy;
+  // Run on change of the filtered result set or sort parameters
+  }, [filtered, sortKey, sortDir]);
+
+  // ==========  Rendering  ==========
+
   return (
     <div className="container mt-5">
+      {/* Title */}
       <h1>Pokémon Data Collector</h1>
 
+      {/* Toolbar */}
+      <Toolbar 
+        query={query} setQuery={setQuery}
+        sortKey={sortKey} setSortKey={setSortKey}
+        sortDir={sortDir} setSortDir={setSortDir}
+      />
+
+      {/* Results */}
       {loading ? (
-      // Display loading message until fetch complete
+      // Display loading message until fetch (partially) complete
         <p>Fetching data...</p>
 
+      // Detail page
       ): selectedPokemon ? (
         <div>
             <button onClick={() => setSelectedPokemon(null)}>Back to list</button>
             <PokemonDetail pokemon={selectedPokemon} />
         </div>
-      // Fetch success
+
+      // Overview page
       ) : pokemonArray.length > 0 ? (
         <PokemonList 
-          pokemonArray={pokemonArray}
+          pokemonArray={displayedPokemon}
           onSelect={setSelectedPokemon}
         />
+
       // Fetch failure
       ) : (
         <p>Failed to fetch Pokemon data.</p>
