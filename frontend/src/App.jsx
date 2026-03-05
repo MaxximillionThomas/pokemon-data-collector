@@ -28,11 +28,15 @@ function App() {
   const [loading, setLoading] = useState(true);
   const hasFetched = useRef(false);
   const [fetchSuccess, setFetchSuccess] = useState(false);
+  const [showProgress, setShowProgress] = useState(true);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
 
   // ==========  Data fetching  ==========
+
+  // Number of records to fetch
+  const totalPokemon = 151;
 
   // On first load, ALL Pokemon should be visible -> hydrate from S3
   useEffect(() => {
@@ -45,8 +49,8 @@ function App() {
       // Target the CloudFront distribution for the S3 bucket 
       const CLOUDFRONT_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-data/';
 
-      // Iterate through each Pokemond Id up to the limit of 151 (data files are saved in the format '#.json')
-      for (let pokemon_id = 1; pokemon_id <= 151; pokemon_id++) {
+      // Iterate through each Pokemond Id up to the limit of totalPokemon (data files are saved in the format '#.json')
+      for (let pokemon_id = 1; pokemon_id <= totalPokemon; pokemon_id++) {
         try {
           const response = await fetch(`${CLOUDFRONT_URL}${pokemon_id}.json`);
           
@@ -59,6 +63,7 @@ function App() {
 
           // On fetch success, read the (Pokemon) data as JSON and push it to the state array
           const data = await response.json();
+          console.log('Loaded data fields:', Object.keys(data));
           setPokemonArray(prev => [...prev, data]);
 
           // After the first update, stop the loading state
@@ -83,6 +88,17 @@ function App() {
     loadPokedex();
   // Run only on first load of the web application
   }, []);
+
+  // Autodismiss the fetch progress message after all data has been fetched
+  useEffect(() => {
+    if (pokemonArray.length === totalPokemon) {
+      // In 3 seconds, hide the progress message
+      const timer = setTimeout(() => setShowProgress(false), 3000);
+      // Clean up the timer
+      return () => clearTimeout(timer);
+    }
+  // Check with every fetched object addition to pokemonArray
+  }, [pokemonArray.length]);
 
   // ==========  Filtering + sorting  ==========
 
@@ -178,7 +194,10 @@ function App() {
       <nav>
         <ul className="pagination">
           <button 
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            onClick={() => {
+              setCurrentPage(prev => Math.max(prev - 1, 1));
+              setSelectedPokemon(null);
+            }}
             disabled={currentPage === 1}
           >
             Prev
@@ -187,7 +206,10 @@ function App() {
           {pageNumbers.map(page => (
             <button 
               key={page} 
-              onClick={() => setCurrentPage(page)}
+              onClick={() => {
+                setCurrentPage(page);
+                setSelectedPokemon(null);
+              }}
               className={currentPage === page ? 'active' : ''}
             >
               {page}
@@ -195,13 +217,21 @@ function App() {
           ))}
           
           <button 
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            onClick={() => {
+              setCurrentPage(prev => Math.min(prev + 1, totalPages));
+              setSelectedPokemon(null);
+            }}
             disabled={currentPage === totalPages}
           >
             Next
           </button>
         </ul>
       </nav>
+
+      {/* Fetch progress message */}
+      {showProgress && (
+        <div>{pokemonArray.length} of {totalPokemon} Pokémon processed.</div>
+      )}
 
       {/* Results */}
       {loading ? (

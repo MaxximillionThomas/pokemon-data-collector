@@ -23,7 +23,7 @@ BUCKET_NAME = 'pokemon-data-collector-s3'
 
 def fetch_pokemon_data(pokemon_id):
     """
-    Fetch and filter the overview data for a specific Pokemon.
+    Fetch and filter data for a specific Pokemon.
     """
     # Inject the target pokemon into the pokeapi link
     main_url = f'https://pokeapi.co/api/v2/pokemon/{pokemon_id}'
@@ -41,13 +41,18 @@ def fetch_pokemon_data(pokemon_id):
         species_response.raise_for_status()
         species_data = species_response.json()
 
+        # Target FireRed/LeafGreen sprites
+        frlg_sprites = main_data['sprites']['versions']['generation-iii']['firered-leafgreen']
+
         # Map the data
         mapped_data = {
             'id': main_data['id'],
             'name': main_data['name'],
             'types': [t['type']['name'] for t in main_data['types']],
-            'spriteFront': main_data['sprites']['front_default'],
-            'spriteBack': main_data['sprites']['back_default'], 
+            'spriteFront': frlg_sprites['front_default'],
+            'spriteBack': frlg_sprites['back_default'],
+            'spriteFrontShiny': frlg_sprites['front_shiny'],
+            'spriteBackShiny': frlg_sprites['back_shiny'],
             'abilities': [a['ability']['name'] for a in main_data['abilities']],
             # Moves that the Pokemon learns 
             'learnset': [
@@ -79,8 +84,8 @@ def fetch_pokemon_data(pokemon_id):
         return mapped_data        
 
     # If unsuccessful, print the error message to the terminal
-    except requests.exceptions.RequestException as e:
-        print(f'Error fetching data: {e}.')
+    except Exception as e:
+        print(f'Error fetching data for Id {pokemon_id}: {e}.')
         return None
     
 def cloud_pipeline(pokemon_id, data):

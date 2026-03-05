@@ -26,8 +26,9 @@ export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSort
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Try 'Mew' or '151'..."
+          placeholder="Try 'Char' or '6'..."
         />
+        <button onClick={() => setQuery('')}>Clear</button>
       </div>
 
       {/* Sort Controls */}

@@ -10,7 +10,6 @@ import { useState } from 'react';
 import { Badge } from 'react-bootstrap';
 import { LearnsetTable } from './LearnsetTable';
 import { PokemonCard } from './PokemonCard';
-import { toTitleCase } from '../utils/helpers';
 
 /**
  * Renders the full details of a specific Pokemon.
@@ -42,11 +41,11 @@ export function PokemonDetail({ pokemon, pokemonArray, onSelect, currentPage, se
     const nextPokemon = pokemonArray[currentIndex + 1];
 
     // Book-end Pokemon
-    const missingNo = { 
-        id: '???', 
-        name: 'MissingNo.', 
-        types: ['???'], 
-        spriteFront: 'https://s3.pokeos.com/pokeos-uploads/forgotten-dex/pokemon/0-missingNo.png' 
+    const missingNo = {
+        id: '???',
+        name: 'MissingNo.',
+        types: ['???'],
+        spriteFront: 'https://s3.pokeos.com/pokeos-uploads/forgotten-dex/pokemon/0-missingNo.png'
     }
 
     /**
@@ -85,27 +84,45 @@ export function PokemonDetail({ pokemon, pokemonArray, onSelect, currentPage, se
                     <p>Previous</p>
                     <PokemonCard pokemon={prevPokemon} onSelect={onSelect} />
                 </div>
-            ) :  (               
+            ) : (
                 <div>
                     <p>Previous (None)</p>
-                    <PokemonCard pokemon={missingNo} onSelect={() => {}} />
+                    <PokemonCard pokemon={missingNo} onSelect={() => { }} />
                 </div>)
-            } 
+            }
 
             {/* Details - current pokemon */}
             <div>
                 {/* Sprites and basic info */}
                 <section>
-                    <div>
-                        <img src={pokemon.spriteFront} alt={`${pokemon.name} front`} />
-                        <img src={pokemon.spriteBack} alt={`${pokemon.name} back`} />
-                    </div>  
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
+                        <div>
+                            <img src={pokemon.spriteFront} alt={`${pokemon.name} front default`} />
+                            <p>Front Default</p>
+                        </div>
 
-                    <h1>{pokemon.id} - {toTitleCase(pokemon.name)}</h1>
+                        <div>
+                            <img src={pokemon.spriteBack} alt={`${pokemon.name} back default`} />
+                            <p>Back Default</p>
+                        </div>
+
+                        <div>
+                            <img src={pokemon.spriteFrontShiny} alt={`${pokemon.name} front shiny`} />
+                            <p>Front Shiny</p>
+                        </div>
+
+                        <div>
+                            <img src={pokemon.spriteBackShiny} alt={`${pokemon.name} back shiny`} />
+                            <p>Back Shiny</p>
+                        </div>
+
+                    </div>
+
+                    <h1 className="text-capitalize">{pokemon.id} - {pokemon.name}</h1>
 
                     <div>
                         {pokemon.types.map(type => (
-                            <Badge key={type} bg="info" className="me-1">{type}</Badge>
+                            <Badge key={type} bg="info" className="me-1 text-capitalize">{type}</Badge>
                         ))}
                     </div>
                 </section>
@@ -113,24 +130,27 @@ export function PokemonDetail({ pokemon, pokemonArray, onSelect, currentPage, se
                 {/* Pokedex entry and location */}
                 <section>
                     <p>{pokemon.entry}</p>
-                    <p>Habitat: {pokemon.location}</p>
+                    <p className="text-capitalize">Habitat: {pokemon.location}</p>
                 </section>
 
                 {/* Evolution chain (placeholders for now*/}
                 <section>
-                    <div>
-                        <img src={pokemon.spriteFront} alt={'Evolution stage 1'} />
-                        <p>Evolution Stage 1</p>
-                    </div>
+                    <h2>Evolution Chain</h2>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '100px' }}>
+                        <div>
+                            <img src={pokemon.spriteFront} alt={'Stage 1'} />
+                            <p>Stage 1</p>
+                        </div>
 
-                    <div>
-                        <img src={pokemon.spriteFront} alt={'Evolution stage 2'} />
-                        <p>Evolution Stage 2</p>
-                    </div>
+                        <div>
+                            <img src={pokemon.spriteFront} alt={'Stage 2'} />
+                            <p>Stage 2</p>
+                        </div>
 
-                    <div>
-                        <img src={pokemon.spriteFront} alt={'Evolution stage 3'} />
-                        <p>Evolution Stage 3</p>
+                        <div>
+                            <img src={pokemon.spriteFront} alt={'Stage 3'} />
+                            <p>Stage 3</p>
+                        </div>
                     </div>
                 </section>
 
@@ -139,7 +159,7 @@ export function PokemonDetail({ pokemon, pokemonArray, onSelect, currentPage, se
                     <h2>Abilities</h2>
                     <ul>
                         {pokemon.abilities.map((ability, index) => (
-                            <li key={index}>{ability}</li>
+                            <li key={index} className="text-capitalize">{ability}</li>
                         ))}
                     </ul>
 
@@ -158,12 +178,12 @@ export function PokemonDetail({ pokemon, pokemonArray, onSelect, currentPage, se
                     <p>Next</p>
                     <PokemonCard pokemon={nextPokemon} onSelect={onSelect} />
                 </div>
-            ) :  (               
+            ) : (
                 <div>
                     <p>Next (None)</p>
-                    <PokemonCard pokemon={missingNo} onSelect={() => {}} />
+                    <PokemonCard pokemon={missingNo} onSelect={() => { }} />
                 </div>)
-            } 
+            }
         </div>
     );
 };

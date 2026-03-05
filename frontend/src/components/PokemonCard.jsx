@@ -26,11 +26,12 @@ export function PokemonCard({ pokemon, onSelect }) {
             <Card.Img variant="top" src={pokemon.spriteFront} alt={pokemon.name} />
             <Card.Body>
                 {/* Name and Id */}
-                <Card.Title>#{pokemon.id} - {pokemon.name.toLocaleUpperCase()}</Card.Title>
+                <Card.Title>#{pokemon.id}</Card.Title>
+                <Card.Title>{pokemon.name.toLocaleUpperCase()}</Card.Title>
                 <div>
                     {/* Types */}
                     {pokemon.types.map(type => (
-                        <Badge key={type} bg="info" className="me-1">{type}</Badge>
+                        <Badge key={type} bg="info" className="me-1 text-capitalize">{type}</Badge>
                     ))}
                 </div>
             </Card.Body>
