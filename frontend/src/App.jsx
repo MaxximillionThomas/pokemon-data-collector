@@ -63,7 +63,6 @@ function App() {
 
           // On fetch success, read the (Pokemon) data as JSON and push it to the state array
           const data = await response.json();
-          console.log('Loaded data fields:', Object.keys(data));
           setPokemonArray(prev => [...prev, data]);
 
           // After the first update, stop the loading state
@@ -250,10 +249,12 @@ function App() {
             <PokemonDetail 
               pokemon={selectedPokemon} 
               pokemonArray={pokemonArray}
+              displayedPokemon={displayedPokemon}
               onSelect={setSelectedPokemon}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
               itemsPerPage={itemsPerPage}
+              setQuery={setQuery}
             />
         </div>
 
