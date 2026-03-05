@@ -17,7 +17,7 @@ function App() {
 
   // Toolbar
   const [query, setQuery] = useState('');
-  const [sortKey, setSortKey] = useState('name');
+  const [sortKey, setSortKey] = useState('id');
   const [sortDir, setSortDir] = useState('asc');
   
   // Overview / detailed views
@@ -27,10 +27,10 @@ function App() {
   // Rendering support
   const [loading, setLoading] = useState(true);
   const hasFetched = useRef(false);
+  const [fetchSuccess, setFetchSuccess] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
 
   // ==========  Data fetching  ==========
 
@@ -63,6 +63,9 @@ function App() {
 
           // After the first update, stop the loading state
           if (pokemon_id === 1) setLoading(false);
+
+          // Enable rendering
+          setFetchSuccess(true);
           
         // Handle fetch failure (2/2)
         } catch (error) {
@@ -128,8 +131,9 @@ function App() {
   }, [filtered, sortKey, sortDir]);
 
   // ==========  Pagination  ==========
+  const itemsPerPage = 10;
 
-  // Slice the results to meet the 'results per page' limit
+  // Slice the results to meet the itemsPerPage limit, based on current page number
   const totalPages = Math.ceil(displayedPokemon.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedPokemon = displayedPokemon.slice(startIndex, startIndex + itemsPerPage);
@@ -148,8 +152,13 @@ function App() {
         pages.push(i);
       }
       return pages;
-    // Run on change of current page or result set
+    // Run on change of current page or result set (indirectly)
     }, [currentPage, totalPages]);
+
+    // Reset the page number to 1 on change of filter / sort parameters
+    useEffect(() => {
+      setCurrentPage(1);
+    }, [query, sortKey, sortDir]);
 
   // ==========  Rendering  ==========
 
@@ -165,58 +174,66 @@ function App() {
         sortDir={sortDir} setSortDir={setSortDir}
       />
 
+      {/* Page controls */}
+      <nav>
+        <ul className="pagination">
+          <button 
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Prev
+          </button>
+          
+          {pageNumbers.map(page => (
+            <button 
+              key={page} 
+              onClick={() => setCurrentPage(page)}
+              className={currentPage === page ? 'active' : ''}
+            >
+              {page}
+            </button>
+          ))}
+          
+          <button 
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </ul>
+      </nav>
+
       {/* Results */}
       {loading ? (
       // Display loading message until fetch (partially) complete
         <p>Fetching data...</p>
 
+      // Fetch failure
+      ) : fetchSuccess === false ?  (
+        <p>Failed to fetch Pokemon data.</p>
+
       // Detail page
-      ): selectedPokemon ? (
+      ) : selectedPokemon ? (
         <div>
             <button onClick={() => setSelectedPokemon(null)}>Back to list</button>
-            <PokemonDetail pokemon={selectedPokemon} />
+
+            <PokemonDetail 
+              pokemon={selectedPokemon} 
+              pokemonArray={pokemonArray}
+              onSelect={setSelectedPokemon}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              itemsPerPage={itemsPerPage}
+            />
         </div>
 
       // Overview page
-      ) : pokemonArray.length > 0 ? (
-        <div>
-          {/* Page controls */}
-          <nav>
-            <ul className="pagination">
-              <button 
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                Prev
-              </button>
-              
-              {pageNumbers.map(page => (
-                <button 
-                  key={page} 
-                  onClick={() => setCurrentPage(page)}
-                  className={currentPage === page ? 'active' : ''}
-                >
-                  {page}
-                </button>
-              ))}
-              
-              <button 
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </button>
-            </ul>
-          </nav>
+      ) : paginatedPokemon.length > 0 ? (
+        <PokemonList 
+          pokemonArray={paginatedPokemon}
+          onSelect={setSelectedPokemon}
+        />
 
-          {/* Result set */}
-          <PokemonList 
-            pokemonArray={paginatedPokemon}
-            onSelect={setSelectedPokemon}
-          />
-        </div>
-
-      // Fetch failure
       ) : (
         <p>Failed to fetch Pokemon data.</p>
       )}
