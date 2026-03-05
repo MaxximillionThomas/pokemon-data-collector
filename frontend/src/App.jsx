@@ -19,6 +19,7 @@ function App() {
   const [query, setQuery] = useState('');
   const [sortKey, setSortKey] = useState('id');
   const [sortDir, setSortDir] = useState('asc');
+  const [selectedTypes, setSelectedTypes] = useState([]);
   
   // Overview / detailed views
   const [pokemonArray, setPokemonArray] = useState([]);
@@ -101,23 +102,27 @@ function App() {
 
   // ==========  Filtering + sorting  ==========
 
-  // Normalize the searchbar query
-  const normalized = query.trim().toLowerCase();
-
   // Filter the overview results per the query
   const filtered = useMemo(() => {
     return pokemonArray.filter((pokemon) => {
-      // A query must exist to filter results
-      if (!normalized) return true;
+      // Normalize the searchbar query
+      const normalized = query.trim().toLowerCase();
 
       // Check name and Id for partial match
       const inName = pokemon.name.toLowerCase().includes(normalized);
       const inId = pokemon.id.toString().includes(normalized);
+      const inTypes = selectedTypes.length === 0 || pokemon.types.some(type => selectedTypes.includes(type));
 
-      return inName || inId;
+      if (pokemon.name === 'growlithe') {
+        console.log(pokemon.name);
+        console.log(`inName: ${inName}, inId: ${inId}, inTypes: ${inTypes}`);
+      }
+
+      // Pokemon must partially match {Name OR Id} AND be of the selected Type
+      return (inName || inId) && inTypes;
     });
-  // Run on change of the result set or query
-  }, [pokemonArray, normalized]);
+  // Run on change of the query or type filter
+  }, [pokemonArray, query, selectedTypes]);
 
   // Sort the filtered results
   const displayedPokemon = useMemo(() => {
@@ -144,6 +149,11 @@ function App() {
     return copy;
   // Run on change of the filtered result set or sort parameters
   }, [filtered, sortKey, sortDir]);
+
+  // On change of displayed Pokemon, reset view to page 1
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [displayedPokemon]);
 
   // ==========  Pagination  ==========
   const itemsPerPage = 10;
@@ -184,13 +194,17 @@ function App() {
 
       {/* Toolbar */}
       <Toolbar 
-        query={query} setQuery={setQuery}
-        sortKey={sortKey} setSortKey={setSortKey}
-        sortDir={sortDir} setSortDir={setSortDir}
+        query={query}                   setQuery={setQuery}
+        sortKey={sortKey}               setSortKey={setSortKey}
+        sortDir={sortDir}               setSortDir={setSortDir}
+        selectedTypes={selectedTypes}   setSelectedTypes={setSelectedTypes}
       />
 
+      {/* TEMP VISUAL AID */}
+      <div>-</div>
+
       {/* Page controls */}
-      <nav>
+      <nav style={{display: 'flex', justifyContent: 'center'}}>
         <ul className="pagination">
           <button 
             onClick={() => {
