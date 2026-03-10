@@ -31,9 +31,9 @@ import { PokemonCard } from './PokemonCard';
  * @param {Array<Object>} props.displayedPokemon - The currently filtered/sorted list for navigation.
  * @param {Function} props.onSelect - Callback to change the selected Pokémon in App state.
  * @param {number} props.currentPage - The current page of the list view.
- * @param {Function} props.setCurrentPage - Callback to change the parent pagination state.
+ * @param {Function} props.setCurrentPage - Callback to update the 'page' parameter in the URL. 
  * @param {number} props.itemsPerPage - Number of items shown per page.
- * @param {Function} props.setQuery - Callback to reset the search bar query.
+ * @param {Function} props.setQuery - Callback to update the 'q' parameter in the URL and reset search filters. 
  * @returns {JSX.Element} A detailed view of the selected Pokemon with navigation capabilities.
  */
 export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelect, currentPage, setCurrentPage, itemsPerPage, setQuery }) {
@@ -62,10 +62,11 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
     function handlePrev() {
         // There must be a Pokemon found at {pokemonArray[prevPokemon]}
         if (prevPokemon) {
-            // If the previous PokemonCard is behind the current page, decrement the page number
-            if ((currentIndex - 1) < (currentPage - 1) * itemsPerPage) {
-                setCurrentPage(prev => Math.max(prev - 1, 1));
-            }
+            // Determine which page the PREVIOUS Pokemon should be found on
+            const newIndex = currentIndex - 1;
+            const newPage = Math.floor(newIndex / itemsPerPage) + 1
+
+            setCurrentPage(newPage);
             onSelect(prevPokemon);
         }
     }
@@ -76,10 +77,11 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
     function handleNext() {
         // There must be a Pokemon found at {pokemonArray[nextPokemon]}
         if (nextPokemon) {
-            // If the next PokemonCard is beyond the current page, increment the page number
-            if ((currentIndex + 1) >= currentPage * itemsPerPage) {
-                setCurrentPage(prev => prev + 1);
-            }
+            // Determine which page the  NEXT Pokemon should be found on
+            const newIndex = currentIndex + 1;
+            const newPage = Math.floor(newIndex / itemsPerPage) + 1
+
+            setCurrentPage(newPage);
             onSelect(nextPokemon);
         }
     };

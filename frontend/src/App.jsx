@@ -11,16 +11,11 @@ import { PokemonDetail } from './components/PokemonDetail';
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { toTitleCase } from './utils/helpers';
 import { Toolbar } from './components/Toolbar';
+import { useSearchParams } from 'react-router-dom';
 
 function App() {
   // ==========  Use states  ==========
 
-  // Toolbar
-  const [query, setQuery] = useState('');
-  const [sortKey, setSortKey] = useState('id');
-  const [sortDir, setSortDir] = useState('asc');
-  const [selectedTypes, setSelectedTypes] = useState([]);
-  
   // Overview / detailed views
   const [pokemonArray, setPokemonArray] = useState([]);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
@@ -31,8 +26,50 @@ function App() {
   const [fetchSuccess, setFetchSuccess] = useState(false);
   const [showProgress, setShowProgress] = useState(true);
 
+  // URL syncing
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // ==========  URL syncing  ==========
+
+  // Toolbar
+  const query = searchParams.get('q') ?? '';
+  const sortKey = searchParams.get('sortKey') ?? 'id';
+  const sortDir = searchParams.get('sortDir') ?? 'asc';
+  const selectedTypes = searchParams.get('types') ? searchParams.get('types').split(',') : [];
+  
   // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
+  const currentPage = searchParams.get('page') ?? '1';
+
+  /**
+   * Updates the browser's URL search parameters with new values.
+   * Merges the provided parameters into the existing search state and 
+   * removes any keys with empty or null values.
+   * @param {Object} newParams - An object containing the parameters to update or remove.
+   * @param {string|number|null} [newParams.q] - The search query string.
+   * @param {string|null} [newParams.sortKey] - The field to sort by.
+   * @param {string|null} [newParams.sortDir] - The sort direction ('asc' or 'desc').
+   * @param {string|null} [newParams.types] - Comma-separated string of selected types.
+   * @param {number|null} [newParams.page] - The current pagination page number.
+   */
+  function updateParams(newParams) {
+    // Get a handle on this app's search parameters
+    const next = new URLSearchParams(searchParams);
+
+    // Iterate through the key:value pairs of newParams (ex: {q:X, sortkey:X, sortDir:X, types:X})
+    Object.entries(newParams).forEach(([key, value]) => {
+      // Current newParams pair has no value (ex: {q:___, sortKey:X, ...}) 
+      if (value === null || value === undefined || value === '') {
+        next.delete(key);
+
+      // Current newParam pair has a value (ex: {q:'char', sortKey:X, ...})
+      } else {
+        next.set(key, value);
+      }
+    });
+
+    // Set the state object using the new pairs
+    setSearchParams(next);
+  }
 
   // ==========  Data fetching  ==========
 
@@ -113,11 +150,6 @@ function App() {
       const inId = pokemon.id.toString().includes(normalized);
       const inTypes = selectedTypes.length === 0 || pokemon.types.some(type => selectedTypes.includes(type));
 
-      if (pokemon.name === 'growlithe') {
-        console.log(pokemon.name);
-        console.log(`inName: ${inName}, inId: ${inId}, inTypes: ${inTypes}`);
-      }
-
       // Pokemon must partially match {Name OR Id} AND be of the selected Type
       return (inName || inId) && inTypes;
     });
@@ -150,11 +182,6 @@ function App() {
   // Run on change of the filtered result set or sort parameters
   }, [filtered, sortKey, sortDir]);
 
-  // On change of displayed Pokemon, reset view to page 1
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [displayedPokemon]);
-
   // ==========  Pagination  ==========
   const itemsPerPage = 10;
 
@@ -180,11 +207,6 @@ function App() {
     // Run on change of current page or result set (indirectly)
     }, [currentPage, totalPages]);
 
-    // Reset the page number to 1 on change of filter / sort parameters
-    useEffect(() => {
-      setCurrentPage(1);
-    }, [query, sortKey, sortDir]);
-
   // ==========  Rendering  ==========
 
   return (
@@ -194,10 +216,17 @@ function App() {
 
       {/* Toolbar */}
       <Toolbar 
-        query={query}                   setQuery={setQuery}
-        sortKey={sortKey}               setSortKey={setSortKey}
-        sortDir={sortDir}               setSortDir={setSortDir}
-        selectedTypes={selectedTypes}   setSelectedTypes={setSelectedTypes}
+        query={query}                   
+        setQuery={(val) =>updateParams({ q: val, page: 1 })}
+
+        sortKey={sortKey}               
+        setSortKey={(val) =>updateParams({ sortKey: val, page: 1 })}
+
+        sortDir={sortDir}               
+        setSortDir={(val) =>updateParams({ sortDir: val, page: 1 })}
+
+        selectedTypes={selectedTypes}   
+        setSelectedTypes={(val) =>updateParams({ types: val.join(','), page: 1 })}
       />
 
       {/* TEMP VISUAL AID */}
@@ -208,7 +237,8 @@ function App() {
         <ul className="pagination">
           <button 
             onClick={() => {
-              setCurrentPage(prev => Math.max(prev - 1, 1));
+              const prevPage = currentPage - 1;
+              updateParams({ page: Math.max(prevPage, 1) });
               setSelectedPokemon(null);
             }}
             disabled={currentPage === 1}
@@ -220,7 +250,7 @@ function App() {
             <button 
               key={page} 
               onClick={() => {
-                setCurrentPage(page);
+                updateParams({ page: page });
                 setSelectedPokemon(null);
               }}
               className={currentPage === page ? 'active' : ''}
@@ -231,7 +261,8 @@ function App() {
           
           <button 
             onClick={() => {
-              setCurrentPage(prev => Math.min(prev + 1, totalPages));
+              const nextPage = Number(currentPage) + 1;
+              updateParams({ page: Math.min(nextPage, totalPages) });
               setSelectedPokemon(null);
             }}
             disabled={currentPage === totalPages}
@@ -266,9 +297,9 @@ function App() {
               displayedPokemon={displayedPokemon}
               onSelect={setSelectedPokemon}
               currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
+              setCurrentPage={(val) => updateParams({ page: val })}
               itemsPerPage={itemsPerPage}
-              setQuery={setQuery}
+              setQuery={(val) => updateParams({ q: val })}
             />
         </div>
 
