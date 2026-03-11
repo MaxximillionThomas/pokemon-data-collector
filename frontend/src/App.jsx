@@ -191,7 +191,8 @@ function App() {
   }, [filtered, sortKey, sortDir]);
 
   // ==========  Pagination  ==========
-  const itemsPerPage = 10;
+
+  const itemsPerPage = 9;
 
   // Slice the results to meet the itemsPerPage limit, based on current page number
   const totalPages = Math.ceil(displayedPokemon.length / itemsPerPage);
@@ -240,6 +241,8 @@ function App() {
         setIsShiny={(val) =>updateParams({ shiny: (val ? 'true' : null) })}
 
         resetSearchParams={resetSearchParams}
+
+        disabled={selectedPokemon ? true : false}
       />
 
       {/* TEMP VISUAL AID */}
@@ -254,7 +257,7 @@ function App() {
               updateParams({ page: Math.max(prevPage, 1) });
               setSelectedPokemon(null);
             }}
-            disabled={currentPage === 1}
+            disabled={currentPage === 1 || selectedPokemon != null}
           >
             Prev
           </button>
@@ -267,6 +270,7 @@ function App() {
                 setSelectedPokemon(null);
               }}
               className={currentPage === page ? 'active' : ''}
+              disabled={selectedPokemon ? true : false}
             >
               {page}
             </button>
@@ -278,7 +282,7 @@ function App() {
               updateParams({ page: Math.min(nextPage, totalPages) });
               setSelectedPokemon(null);
             }}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || selectedPokemon != null}
           >
             Next
           </button>
@@ -302,7 +306,11 @@ function App() {
       // Detail page
       ) : selectedPokemon ? (
         <div>
-            <button onClick={() => setSelectedPokemon(null)}>Back to list</button>
+            <div style={{ textAlign: 'center' }}>
+              <button onClick={() => setSelectedPokemon(null)}>Back to list</button>
+              {/* TEMP SPACING */}
+              <div>-</div>
+            </div>
 
             <PokemonDetail 
               pokemon={selectedPokemon} 

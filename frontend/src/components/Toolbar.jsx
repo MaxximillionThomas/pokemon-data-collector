@@ -22,7 +22,7 @@
  * @param {Function} props.resetSearchParams - Callback to clear all URL search parameters.
  * @returns {JSX.Element} The toolbar component.
  */
-export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSortDir, selectedTypes, setSelectedTypes, isShiny, setIsShiny, resetSearchParams }) {
+export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSortDir, selectedTypes, setSelectedTypes, isShiny, setIsShiny, resetSearchParams, disabled }) {
   // Pokemon types for filtering
   const ALL_TYPES = ['bug', 'dragon', 'electric', 'fighting', 'fire', 'flying', 'ghost', 'grass', 'ground', 'ice', 'normal', 'poison', 'psychic', 'rock', 'water'];
 
@@ -38,7 +38,7 @@ export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSort
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '50px', opacity: (disabled ? 0.75 : 1) }}>
       {/* Search input */}
       <div>
         <label>Search Pokémon:</label>
@@ -46,19 +46,20 @@ export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSort
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Try 'Char' or '6'..."
+          disabled={disabled}
         />
-        <button onClick={() => setQuery('')}>Clear</button>
+        <button onClick={() => setQuery('')} disabled={disabled}>Clear</button>
       </div>
 
       {/* Sort controls */}
       <div>
         <label>Sort By:</label>
-        <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
+        <select value={sortKey} onChange={(e) => setSortKey(e.target.value)} style={{cursor:'pointer'}} disabled={disabled}>
           <option value="name">Name</option>
           <option value="id">Id</option>
         </select>
         
-        <select value={sortDir} onChange={(e) => setSortDir(e.target.value)}>
+        <select value={sortDir} onChange={(e) => setSortDir(e.target.value)} style={{cursor:'pointer'}} disabled={disabled}>
           <option value="asc">Ascending {sortKey == 'name' ? '(A → Z)' : '(1 → 151)'}</option>
           <option value="desc">Descending {sortKey == 'name' ? '(Z → A)' : '(151 → 1)'}</option>
         </select>
@@ -67,7 +68,7 @@ export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSort
       {/* Type filtering */}
       <div>
         <label>Filter Types:</label>
-        <select multiple={true} value={selectedTypes} onChange={handleTypeChange}>
+        <select multiple={true} value={selectedTypes} onChange={handleTypeChange} style={{cursor:'pointer'}} disabled={disabled}>
           {ALL_TYPES.map(type => (
             <option key={type} value={type}>{type}</option>
           ))}
@@ -79,12 +80,15 @@ export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSort
           type="checkbox" 
           checked={isShiny}
           onChange={(e) => {setIsShiny(e.target.checked)}}
+          style={{cursor:'pointer'}}
+          disabled={disabled}
         />
         <label>Shiny Sprites</label>
       </div>
 
       <button 
         onClick={resetSearchParams}
+        disabled={disabled}
       >
         RESET ALL
       </button>

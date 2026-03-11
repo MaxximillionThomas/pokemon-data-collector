@@ -30,13 +30,12 @@ import { PokemonCard } from './PokemonCard';
  * @param {Array<Object>} props.pokemonArray - The full list of Pokémon.
  * @param {Array<Object>} props.displayedPokemon - The currently filtered/sorted list for navigation.
  * @param {Function} props.onSelect - Callback to change the selected Pokémon in App state.
- * @param {number} props.currentPage - The current page of the list view.
  * @param {Function} props.setCurrentPage - Callback to update the 'page' parameter in the URL. 
  * @param {number} props.itemsPerPage - Number of items shown per page.
  * @param {Function} props.setQuery - Callback to update the 'q' parameter in the URL and reset search filters. 
  * @returns {JSX.Element} A detailed view of the selected Pokemon with navigation capabilities.
  */
-export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelect, currentPage, setCurrentPage, itemsPerPage, setQuery }) {
+export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelect, setCurrentPage, itemsPerPage, setQuery }) {
     // Track state of learnset visibility
     const [learnsetVisible, setLearnsetVisible] = useState(false);
 
@@ -153,54 +152,76 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
             <div>
                 {/* Sprites and basic info */}
                 <section>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
-                        <div>
-                            <img src={pokemon.spriteFront} alt={`${pokemon.name} front`} />
-                            <p>Front</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        {/* Normal sprites */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
+                            <div>
+                                <img src={pokemon.spriteFront} alt={`${pokemon.name} front`} />
+                                <p>Front</p>
+                            </div>
+
+                            <div>
+                                <img src={pokemon.spriteBack} alt={`${pokemon.name} back`} />
+                                <p>Back</p>
+                            </div>
                         </div>
 
-                        <div>
-                            <img src={pokemon.spriteBack} alt={`${pokemon.name} back`} />
-                            <p>Back</p>
-                        </div>
+                        {/* Shiny sprites */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
+                            <div>
+                                <img src={pokemon.spriteFrontShiny} alt={`${pokemon.name} front shiny`} />
+                                <p>Front (Shiny)</p>
+                            </div>
 
-                        <div>
-                            <img src={pokemon.spriteFrontShiny} alt={`${pokemon.name} front shiny`} />
-                            <p>Front (Shiny)</p>
+                            <div>
+                                <img src={pokemon.spriteBackShiny} alt={`${pokemon.name} back shiny`} />
+                                <p>Back (Shiny)</p>
+                            </div>
                         </div>
-
-                        <div>
-                            <img src={pokemon.spriteBackShiny} alt={`${pokemon.name} back shiny`} />
-                            <p>Back (Shiny)</p>
-                        </div>
-
                     </div>
 
-                    <h1 className="text-capitalize">{pokemon.id} - {pokemon.name}</h1>
-
                     <div>
-                        {pokemon.types.map(type => (
-                            <Badge key={type} bg="info" className="me-1 text-capitalize">{type}</Badge>
-                        ))}
+                        <h1 className="text-capitalize" style={{display: 'flex', justifyContent: 'center', alignItems: 'center',}}><strong>
+                            #{pokemon.id} - {pokemon.name}
+                        </strong></h1>
+
+
                     </div>
                 </section>
 
                 {/* Pokedex entry and location */}
+                <h2><strong>Pokédex Info</strong></h2>
                 <section>
+                    <h3>Description</h3>
                     <p>{pokemon.entry.replace(/[\n\f]/g, ' ')}</p>
-                    <p className="text-capitalize">Habitat: {pokemon.location}</p>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
+                        <div>
+                            <h3>Habitat</h3>
+                            <div className="text-capitalize">{pokemon.location === 'rare' ? 'Unknown' : pokemon.location}</div>
+                        </div>
+
+                        <div>
+                            <h3>Types</h3>
+                            <div>
+                                {pokemon.types.map(type => (
+                                    <Badge key={type} bg="info" className="me-1 text-capitalize">{type}</Badge>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
                 {/* Evolution chain */}
                 <section>
-                    <h2>Evolution Chain</h2>
+                    <h3>Evolution Chain</h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '100px' }}>
                         {evoChain.map((evo) => {
                             // Get a handle on the full dataset for the evo Pokemon (evo object only holds Name and Id)
                             const evoData = pokemonArray.find(p => p.id === evo.id);
 
                             return (
-                                <div key={evo.id} onClick={() => handleEvolutionClick(evo.id)}>
+                                <div key={evo.id} onClick={() => handleEvolutionClick(evo.id)}  style={{cursor:'pointer'}}>
                                     {evoData && (
                                         <div>
                                             <img src={evoData.spriteFront} alt={evo.name} />
@@ -215,13 +236,15 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
 
                 {/* Abilities and learnset */}
                 <section>
-                    <h2>Abilities</h2>
+                    <h2><strong>Technicals</strong></h2>
+                    <h3>Abilities</h3>
                     <ul>
                         {pokemon.abilities.map((ability, index) => (
                             <li key={index} className="text-capitalize">{ability}</li>
                         ))}
                     </ul>
 
+                    <h3>Learnset</h3>
                     <div>
                         <button onClick={() => setLearnsetVisible(!learnsetVisible)}>
                             {learnsetVisible ? 'Hide Learnset' : 'View Learnset'}
