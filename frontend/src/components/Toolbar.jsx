@@ -17,9 +17,12 @@
  * @param {Function} props.setSortDir - State setter for sort direction.
  * @param {string[]} props.selectedTypes - Array of currently selected Pokémon types.
  * @param {Function} props.setSelectedTypes - State setter to update the selected types array.
+ * @param {boolean} props.isShiny - Indicates whether to display the shiny versions of Pokémon sprites.
+ * @param {Function} props.setIsShiny - Callback to toggle the shiny state in the URL.
+ * @param {Function} props.resetSearchParams - Callback to clear all URL search parameters.
  * @returns {JSX.Element} The toolbar component.
  */
-export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSortDir, selectedTypes, setSelectedTypes }) {
+export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSortDir, selectedTypes, setSelectedTypes, isShiny, setIsShiny, resetSearchParams }) {
   // Pokemon types for filtering
   const ALL_TYPES = ['bug', 'dragon', 'electric', 'fighting', 'fire', 'flying', 'ghost', 'grass', 'ground', 'ice', 'normal', 'poison', 'psychic', 'rock', 'water'];
 
@@ -70,6 +73,21 @@ export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSort
           ))}
         </select>
       </div>
+
+      <div>
+        <input 
+          type="checkbox" 
+          checked={isShiny}
+          onChange={(e) => {setIsShiny(e.target.checked)}}
+        />
+        <label>Shiny Sprites</label>
+      </div>
+
+      <button 
+        onClick={resetSearchParams}
+      >
+        RESET ALL
+      </button>
     </div>
   );
 }

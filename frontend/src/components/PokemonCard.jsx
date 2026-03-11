@@ -17,13 +17,14 @@ import { Card, Badge } from 'react-bootstrap';
  * @param {string[]} props.pokemon.types - List of Pokemon types.
  * @param {string} props.pokemon.spriteFront - URL to the Pokemon sprite (front).
  * @param {Function} props.onSelect - Callback function to handle selecting a Pokemon for the detail view.
+ * @param {boolean} props.isShiny - Indicates whether to display the shiny versions of Pokemon sprites.
  * @returns {JSX.Element} The rendered Pokemon card component.
  */
-export function PokemonCard({ pokemon, onSelect }) {
+export function PokemonCard({ pokemon, onSelect, isShiny }) {
     return (
         <Card style={{ width: '12rem', margin: '10px' }} onClick={() => onSelect(pokemon)}>
             {/* Sprite */}
-            <Card.Img variant="top" src={pokemon.spriteFront} alt={pokemon.name} />
+            <Card.Img variant="top" src={isShiny ? pokemon.spriteFrontShiny : pokemon.spriteFront} alt={pokemon.name} />
             <Card.Body>
                 {/* Name and Id */}
                 <Card.Title>#{pokemon.id}</Card.Title>

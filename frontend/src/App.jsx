@@ -36,6 +36,7 @@ function App() {
   const sortKey = searchParams.get('sortKey') ?? 'id';
   const sortDir = searchParams.get('sortDir') ?? 'asc';
   const selectedTypes = searchParams.get('types') ? searchParams.get('types').split(',') : [];
+  const isShiny = searchParams.get('shiny') === 'true';
   
   // Pagination
   const currentPage = searchParams.get('page') ?? '1';
@@ -69,6 +70,13 @@ function App() {
 
     // Set the state object using the new pairs
     setSearchParams(next);
+  }
+
+  /**
+   * Reset all URL parameters (query, sorting, type filtering, shiny toggle).
+   */
+  function resetSearchParams() {
+    setSearchParams({});
   }
 
   // ==========  Data fetching  ==========
@@ -227,6 +235,11 @@ function App() {
 
         selectedTypes={selectedTypes}   
         setSelectedTypes={(val) =>updateParams({ types: val.join(','), page: 1 })}
+
+        isShiny={isShiny}
+        setIsShiny={(val) =>updateParams({ shiny: (val ? 'true' : null) })}
+
+        resetSearchParams={resetSearchParams}
       />
 
       {/* TEMP VISUAL AID */}
@@ -308,6 +321,7 @@ function App() {
         <PokemonList 
           pokemonArray={paginatedPokemon}
           onSelect={setSelectedPokemon}
+          isShiny={isShiny}
         />
 
       ) : (

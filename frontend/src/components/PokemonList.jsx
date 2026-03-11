@@ -13,9 +13,10 @@ import { PokemonCard } from './PokemonCard';
  * @param {Object} props - The component props.
  * @param {Array<Object>} props.pokemonArray - An array of Pokemon data objects.
  * @param {Function} props.onSelect - Callback function to handle selecting a Pokemon for the detail view.
+ * @param {boolean} props.isShiny - Indicates whether to display the shiny versions of Pokemon sprites.
  * @returns {JSX.Element} An array of PokemonCard components.
  */
-export function PokemonList({ pokemonArray, onSelect }) {
+export function PokemonList({ pokemonArray, onSelect, isShiny }) {
   return (
     <div className='row'>
       {pokemonArray.map((pokemon) => (
@@ -23,6 +24,7 @@ export function PokemonList({ pokemonArray, onSelect }) {
           key={pokemon.id} 
           pokemon={pokemon} 
           onSelect={onSelect}
+          isShiny={isShiny}
         />
       ))}
     </div>
