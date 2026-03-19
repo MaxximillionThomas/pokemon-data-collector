@@ -18,7 +18,7 @@ import { PokemonCard } from './PokemonCard';
  */
 export function PokemonList({ pokemonArray, onSelect, isShiny }) {
   return (
-    <div className='row'>
+    <div className="pokemon-grid">
       {pokemonArray.map((pokemon) => (
         <PokemonCard 
           key={pokemon.id} 

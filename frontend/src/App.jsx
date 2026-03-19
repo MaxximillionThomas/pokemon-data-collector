@@ -193,7 +193,7 @@ function App() {
 
   // ==========  Pagination  ==========
 
-  const itemsPerPage = 9;
+  const itemsPerPage = 10;
 
   // Slice the results to meet the itemsPerPage limit, based on current page number
   const totalPages = Math.ceil(displayedPokemon.length / itemsPerPage);

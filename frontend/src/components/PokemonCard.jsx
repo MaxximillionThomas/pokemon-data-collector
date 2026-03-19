@@ -22,20 +22,31 @@ import { Card, Badge } from 'react-bootstrap';
  */
 export function PokemonCard({ pokemon, onSelect, isShiny }) {
     return (
-        <Card style={{ width: '12rem', margin: '10px', cursor:'pointer'}} onClick={() => onSelect(pokemon)} >
-            {/* Sprite */}
-            <Card.Img variant="top" src={isShiny ? pokemon.spriteFrontShiny : pokemon.spriteFront} alt={pokemon.name} />
-            <Card.Body>
+        <Card className="pokemon-card" onClick={() => onSelect(pokemon)} >
+
+            {/* Sprite container */}
+            <div className="pokemon-sprite-container">
+                <Card.Img 
+                    className="pokemon-card-img"
+                    src={isShiny ? pokemon.spriteFrontShiny : pokemon.spriteFront} 
+                    alt={pokemon.name} 
+                />
+            </div>
+
+            <div className="pokemon-card-body">
                 {/* Name and Id */}
-                <Card.Title>#{pokemon.id}</Card.Title>
-                <Card.Title>{pokemon.name.toLocaleUpperCase()}</Card.Title>
-                <div>
-                    {/* Types */}
+                <div className="pokemon-id">#{pokemon.id}</div>
+                <div className="pokemon-name">{pokemon.name.toLocaleUpperCase()}</div>
+
+                {/* Types */}
+                <div className="badge-container">
                     {pokemon.types.map(type => (
-                        <Badge key={type} bg="info" className="me-1 text-capitalize">{type}</Badge>
+                        <Badge key={type} bg="info" className="me-1 text-capitalize">
+                            {type}
+                        </Badge>
                     ))}
                 </div>
-            </Card.Body>
+            </div>
         </Card>
     );
 }
