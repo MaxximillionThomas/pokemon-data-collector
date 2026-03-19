@@ -7,6 +7,7 @@
  */
 
 import TypeFiltering from './toolbar/TypeFiltering';
+import SearchInput from './toolbar/SearchInput';
 
 /**
  * Renders the toolbar for searching and sorting Pokémon.
@@ -31,26 +32,11 @@ export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSort
   return (
     <div className={`toolbar-container ${disabled ? 'is-disabled' : ''}`}>
 
-      {/* Search input */}
-      <div className="toolbar-group">
-        <label>Search Pokémon:</label>
-
-        <div className="d-flex">
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Try 'Char' or '6'..."
-            disabled={disabled}
-          />
-
-          <button 
-            onClick={() => setQuery('')} 
-            disabled={disabled}
-          >
-            Clear
-          </button>
-        </div>
-      </div>
+      <SearchInput 
+        query={query}
+        setQuery={setQuery}
+        disabled={disabled}
+      />
 
       {/* Sort controls */}
       <div className="toolbar-group">
