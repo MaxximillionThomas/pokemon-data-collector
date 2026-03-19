@@ -9,6 +9,7 @@
 import TypeFiltering from './toolbar/TypeFiltering';
 import SearchInput from './toolbar/SearchInput';
 import SortControls from './toolbar/SortControls';
+import ShinyToggle from './toolbar/ShinyToggle';
 
 /**
  * Renders the toolbar for searching and sorting Pokémon.
@@ -28,8 +29,6 @@ import SortControls from './toolbar/SortControls';
  * @returns {JSX.Element} The toolbar component.
  */
 export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSortDir, selectedTypes, setSelectedTypes, isShiny, setIsShiny, resetSearchParams, disabled }) {
-
-
   return (
     <div className={`toolbar-container ${disabled ? 'is-disabled' : ''}`}>
 
@@ -54,18 +53,11 @@ export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSort
       />
 
       {/* Shiny toggle */}
-      <div className="toolbar-group align-items-start">
-        <label>Shiny Sprites:</label>
-
-        <div className="checkbox-wrapper">
-          <input 
-            type="checkbox"
-            checked={isShiny}
-            onChange={(e) => {setIsShiny(e.target.checked)}}
-            disabled={disabled}
-          />
-        </div>
-      </div>
+      <ShinyToggle
+        isShiny={isShiny}
+        setIsShiny={setIsShiny}
+        disabled={disabled}
+      />
 
       {/* Reset button */}
       <div className="toolbar-group justify-content-end">
