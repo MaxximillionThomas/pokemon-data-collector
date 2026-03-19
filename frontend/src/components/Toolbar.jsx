@@ -6,6 +6,8 @@
  * @date          March 4, 2026
  */
 
+import { useState, useEffect, useRef } from 'react';
+
 /**
  * Renders the toolbar for searching and sorting Pokémon.
  * @param {Object} props
@@ -23,75 +25,192 @@
  * @returns {JSX.Element} The toolbar component.
  */
 export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSortDir, selectedTypes, setSelectedTypes, isShiny, setIsShiny, resetSearchParams, disabled }) {
+  // ==========  Use states  ==========
+  
+  // Types dropdown collapsibility
+  const [typesExpanded, setTypesExpanded] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // ==========  Constants  ==========
+  
   // Pokemon types for filtering
   const ALL_TYPES = ['bug', 'dragon', 'electric', 'fighting', 'fire', 'flying', 'ghost', 'grass', 'ground', 'ice', 'normal', 'poison', 'psychic', 'rock', 'water'];
 
+  // ==========  Functions  ==========
+
   /**
-   * Handles changes to the multi-select type filter dropdown.
-   * Extracts selected values from the event target and updates the parent state.
-   * @param {React.ChangeEvent<HTMLSelectElement>} e - The change event from the select element.
+   * Determines the label text shown for the Types dropdown.
+   * @returns {string} "All types", a single Type name, OR "Multiple".
    */
-  function handleTypeChange(e) {
-    // Extract selected values from the multiple-select dropdown, setting them to the state object
-    const values = Array.from(e.target.selectedOptions, option => option.value);
-    setSelectedTypes(values);
+  function getDisplayText() {
+    if (selectedTypes.length === 0) return "All Types";
+    if (selectedTypes.length === 1) return selectedTypes[0];
+    return "Multiple";
   }
 
+  /**
+   * Toggles a Pokemon type within the selection array.
+   * @param {React.MouseEvent|React.ChangeEvent} e - The trigger event.
+   * @param {string} type - The Pokemon type to add or remove.
+   */
+  function handleTypeToggle(e, type) {
+    // Prevent the dropdown from closing when a label is clicked
+    e.stopPropagation();
+
+    // Check whether the type selected is already in the state object
+    const isSelected = selectedTypes.includes(type);
+
+    let newSelections = [];
+
+    // If it is, remove it
+    if (isSelected) {
+      newSelections = selectedTypes.filter(t => t !== type);
+
+    // If not, add it
+    } else {
+      newSelections = [...selectedTypes, type];
+    }
+
+    setSelectedTypes(newSelections);
+  }
+
+  // ==========  Use effects  ==========
+
+  /**
+   * Handles auto-collapsing the Types dropdown when clicking outside the component.
+   */
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setTypesExpanded(false);
+      }
+    }
+
+    if (typesExpanded) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [typesExpanded]);
+
+  // ==========  Rendering  ==========
+
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '50px', opacity: (disabled ? 0.75 : 1) }}>
+    <div className={`toolbar-container ${disabled ? 'is-disabled' : ''}`}>
+
       {/* Search input */}
-      <div>
+      <div className="toolbar-group">
         <label>Search Pokémon:</label>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Try 'Char' or '6'..."
-          disabled={disabled}
-        />
-        <button onClick={() => setQuery('')} disabled={disabled}>Clear</button>
+
+        <div className="d-flex">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Try 'Char' or '6'..."
+            disabled={disabled}
+          />
+
+          <button 
+            onClick={() => setQuery('')} 
+            disabled={disabled}
+          >
+            Clear
+          </button>
+        </div>
       </div>
 
       {/* Sort controls */}
-      <div>
+      <div className="toolbar-group">
         <label>Sort By:</label>
-        <select value={sortKey} onChange={(e) => setSortKey(e.target.value)} style={{cursor:'pointer'}} disabled={disabled}>
-          <option value="name">Name</option>
-          <option value="id">Id</option>
-        </select>
-        
-        <select value={sortDir} onChange={(e) => setSortDir(e.target.value)} style={{cursor:'pointer'}} disabled={disabled}>
-          <option value="asc">Ascending {sortKey == 'name' ? '(A → Z)' : '(1 → 151)'}</option>
-          <option value="desc">Descending {sortKey == 'name' ? '(Z → A)' : '(151 → 1)'}</option>
-        </select>
+
+        <div className="d-flex gap-1">
+          <select 
+            value={sortKey} 
+            onChange={(e) => setSortKey(e.target.value)} 
+            disabled={disabled}
+          >
+            <option value="name">Name</option>
+            <option value="id">Id</option>
+          </select>
+          
+          <select 
+            value={sortDir} 
+            onChange={(e) => setSortDir(e.target.value)}
+            disabled={disabled}
+          >
+            <option value="asc">Ascending {sortKey == 'name' ? '(A → Z)' : '(1 → 151)'}</option>
+            <option value="desc">Descending {sortKey == 'name' ? '(Z → A)' : '(151 → 1)'}</option>
+          </select>
+        </div>
       </div>
 
       {/* Type filtering */}
-      <div>
+      <div className="toolbar-group" ref={dropdownRef}>
         <label>Filter Types:</label>
-        <select multiple={true} value={selectedTypes} onChange={handleTypeChange} style={{cursor:'pointer'}} disabled={disabled}>
-          {ALL_TYPES.map(type => (
-            <option key={type} value={type}>{type}</option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <input 
-          type="checkbox" 
-          checked={isShiny}
-          onChange={(e) => {setIsShiny(e.target.checked)}}
-          style={{cursor:'pointer'}}
+    
+        <button 
+          type="button"
+          className="type-dropdown-button text-capitalize"
+          onClick={() => setTypesExpanded(!typesExpanded)}
           disabled={disabled}
-        />
-        <label>Shiny Sprites</label>
+        >
+          {getDisplayText()}
+          <span>{typesExpanded ? '▲' : '▼'}</span>
+        </button>
+
+        {/* Render expanded view only when active */}
+        {typesExpanded && (
+          <div className="type-dropdown-content">
+            <div className="type-grid">
+              {ALL_TYPES.map(type => (
+                <div key={type} className="type-item">
+
+                  <input 
+                    type="checkbox"
+                    id={`filter-${type}`}
+                    checked={selectedTypes.includes(type)}
+                    onChange={(e) => handleTypeToggle(e, type)}
+                    disabled={disabled}
+                  />
+
+                  <label 
+                    htmlFor={`filter-${type}`} 
+                    className="text-capitalize"
+                    onClick={(e) => e.stopPropagation()} 
+                  >
+                    {type}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
-      <button 
-        onClick={resetSearchParams}
-        disabled={disabled}
-      >
-        RESET ALL
-      </button>
+      {/* Shiny toggle */}
+      <div className="toolbar-group align-items-start">
+        <label>Shiny Sprites:</label>
+
+        <div className="checkbox-wrapper">
+          <input 
+            type="checkbox"
+            checked={isShiny}
+            onChange={(e) => {setIsShiny(e.target.checked)}}
+            disabled={disabled}
+          />
+        </div>
+      </div>
+
+      {/* Reset button */}
+      <div className="toolbar-group justify-content-end">
+        <button 
+          className="btn-reset"
+          onClick={resetSearchParams}
+          disabled={disabled}
+        >
+          RESET ALL
+        </button>
+      </div>
     </div>
   );
 }

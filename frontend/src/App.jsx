@@ -12,6 +12,7 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import { toTitleCase } from './utils/helpers';
 import { Toolbar } from './components/Toolbar';
 import { useSearchParams } from 'react-router-dom';
+import './App.css';
 
 function App() {
   // ==========  Use states  ==========
