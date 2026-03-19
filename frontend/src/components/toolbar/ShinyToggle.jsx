@@ -14,7 +14,6 @@
  * @param {boolean} props.disabled - Determines whether elements are interactible.
  * @returns {JSX.Element} The shiny toggle component.
  */
-
 export default function ShinyToggle({ isShiny, setIsShiny, disabled }) {
     return (
         <div className="toolbar-group align-items-start">

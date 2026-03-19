@@ -10,6 +10,7 @@ import TypeFiltering from './toolbar/TypeFiltering';
 import SearchInput from './toolbar/SearchInput';
 import SortControls from './toolbar/SortControls';
 import ShinyToggle from './toolbar/ShinyToggle';
+import ResetButton from './toolbar/ResetButton';
 
 /**
  * Renders the toolbar for searching and sorting Pokémon.
@@ -52,23 +53,16 @@ export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSort
         disabled={disabled}
       />
 
-      {/* Shiny toggle */}
       <ShinyToggle
         isShiny={isShiny}
         setIsShiny={setIsShiny}
         disabled={disabled}
       />
 
-      {/* Reset button */}
-      <div className="toolbar-group justify-content-end">
-        <button 
-          className="btn-reset"
-          onClick={resetSearchParams}
-          disabled={disabled}
-        >
-          RESET ALL
-        </button>
-      </div>
+      <ResetButton
+        resetSearchParams={resetSearchParams}
+        disabled={disabled}
+      />
     </div>
   );
 }
