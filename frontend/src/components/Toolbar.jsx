@@ -8,6 +8,7 @@
 
 import TypeFiltering from './toolbar/TypeFiltering';
 import SearchInput from './toolbar/SearchInput';
+import SortControls from './toolbar/SortControls';
 
 /**
  * Renders the toolbar for searching and sorting Pokémon.
@@ -38,30 +39,13 @@ export function Toolbar({ query, setQuery, sortKey, setSortKey, sortDir, setSort
         disabled={disabled}
       />
 
-      {/* Sort controls */}
-      <div className="toolbar-group">
-        <label>Sort By:</label>
-
-        <div className="d-flex gap-1">
-          <select 
-            value={sortKey} 
-            onChange={(e) => setSortKey(e.target.value)} 
-            disabled={disabled}
-          >
-            <option value="name">Name</option>
-            <option value="id">Id</option>
-          </select>
-          
-          <select 
-            value={sortDir} 
-            onChange={(e) => setSortDir(e.target.value)}
-            disabled={disabled}
-          >
-            <option value="asc">Ascending {sortKey == 'name' ? '(A → Z)' : '(1 → 151)'}</option>
-            <option value="desc">Descending {sortKey == 'name' ? '(Z → A)' : '(151 → 1)'}</option>
-          </select>
-        </div>
-      </div>
+      <SortControls 
+        sortKey={sortKey} 
+        setSortKey={setSortKey} 
+        sortDir={sortDir} 
+        setSortDir={setSortDir} 
+        disabled={disabled}
+      />
 
       <TypeFiltering 
         selectedTypes={selectedTypes}
