@@ -1,20 +1,28 @@
+/* ==========  CONTROLS WRAPPER  ========== */
+
+.controls-wrapper {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+
+  /* Unified Visuals */
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #eee;
+
+  /* Interaction State */
+  transition: opacity 0.3s ease;
+}
+
 /* ==========  TOOLBAR  ========== */
 
 .toolbar-container {
-  /* Layout & Alignment */
   display: flex;
   align-items: flex-end;
   justify-content: center;
   gap: 30px;
-
-  /* Visual Styles */
-  padding: 1.5rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-
-  /* Interaction State */
-  transition: opacity 0.3s ease;
 }
 
 .toolbar-container.is-disabled {
@@ -246,4 +254,42 @@
 
   /* Formatting */
   text-transform: uppercase;
+}
+
+/* ==========  PAGINATION  ========== */
+
+/* --- Layout & Alignment --- */
+.pagination-container {
+  display: flex; 
+  justify-content: center;
+}
+
+/* --- Navigation Controls --- */
+.pagination button {
+  padding: 5px 12px;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.pagination button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.pagination button:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
 }

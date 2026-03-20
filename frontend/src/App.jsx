@@ -224,71 +224,71 @@ function App() {
       {/* Title */}
       <h1>Pokémon Data Collector</h1>
 
-      {/* Toolbar */}
-      <Toolbar 
-        query={query}                   
-        setQuery={(val) =>updateParams({ q: val, page: 1 })}
+      <div className="controls-wrapper">
+        
+        {/* Toolbar */}
+        <Toolbar 
+          query={query}                   
+          setQuery={(val) =>updateParams({ q: val, page: 1 })}
 
-        sortKey={sortKey}               
-        setSortKey={(val) =>updateParams({ sortKey: val, page: 1 })}
+          sortKey={sortKey}               
+          setSortKey={(val) =>updateParams({ sortKey: val, page: 1 })}
 
-        sortDir={sortDir}               
-        setSortDir={(val) =>updateParams({ sortDir: val, page: 1 })}
+          sortDir={sortDir}               
+          setSortDir={(val) =>updateParams({ sortDir: val, page: 1 })}
 
-        selectedTypes={selectedTypes}   
-        setSelectedTypes={(val) =>updateParams({ types: val.join(','), page: 1 })}
+          selectedTypes={selectedTypes}   
+          setSelectedTypes={(val) =>updateParams({ types: val.join(','), page: 1 })}
 
-        isShiny={isShiny}
-        setIsShiny={(val) =>updateParams({ shiny: (val ? 'true' : null) })}
+          isShiny={isShiny}
+          setIsShiny={(val) =>updateParams({ shiny: (val ? 'true' : null) })}
 
-        resetSearchParams={resetSearchParams}
+          resetSearchParams={resetSearchParams}
 
-        disabled={selectedPokemon ? true : false}
-      />
+          disabled={selectedPokemon ? true : false}
+        />
 
-      {/* TEMP VISUAL AID */}
-      <div>-</div>
-
-      {/* Page controls */}
-      <nav style={{display: 'flex', justifyContent: 'center'}}>
-        <ul className="pagination">
-          <button 
-            onClick={() => {
-              const prevPage = currentPage - 1;
-              updateParams({ page: Math.max(prevPage, 1) });
-              setSelectedPokemon(null);
-            }}
-            disabled={currentPage === 1 || selectedPokemon != null}
-          >
-            Prev
-          </button>
-          
-          {pageNumbers.map(page => (
+        {/* Page controls */}
+        <nav className="pagination-container">
+          <ul className="pagination">
             <button 
-              key={page} 
               onClick={() => {
-                updateParams({ page: page });
+                const prevPage = currentPage - 1;
+                updateParams({ page: Math.max(prevPage, 1) });
                 setSelectedPokemon(null);
               }}
-              className={currentPage === page ? 'active' : ''}
-              disabled={selectedPokemon ? true : false}
+              disabled={currentPage === 1 || selectedPokemon != null}
             >
-              {page}
+              Prev
             </button>
-          ))}
-          
-          <button 
-            onClick={() => {
-              const nextPage = Number(currentPage) + 1;
-              updateParams({ page: Math.min(nextPage, totalPages) });
-              setSelectedPokemon(null);
-            }}
-            disabled={currentPage === totalPages || selectedPokemon != null}
-          >
-            Next
-          </button>
-        </ul>
-      </nav>
+            
+            {pageNumbers.map(page => (
+              <button 
+                key={page} 
+                onClick={() => {
+                  updateParams({ page: page });
+                  setSelectedPokemon(null);
+                }}
+                className={currentPage === page ? 'active' : ''}
+                disabled={selectedPokemon ? true : false}
+              >
+                {page}
+              </button>
+            ))}
+            
+            <button 
+              onClick={() => {
+                const nextPage = Number(currentPage) + 1;
+                updateParams({ page: Math.min(nextPage, totalPages) });
+                setSelectedPokemon(null);
+              }}
+              disabled={currentPage === totalPages || selectedPokemon != null}
+            >
+              Next
+            </button>
+          </ul>
+        </nav>
+      </div>
 
       {/* Fetch progress message */}
       {showProgress && (
@@ -306,11 +306,9 @@ function App() {
 
       // Detail page
       ) : selectedPokemon ? (
-        <div>
-            <div style={{ textAlign: 'center' }}>
+        <div className="detail-view-container">
+            <div className="detail-back-actions">
               <button onClick={() => setSelectedPokemon(null)}>Back to list</button>
-              {/* TEMP SPACING */}
-              <div>-</div>
             </div>
 
             <PokemonDetail 
