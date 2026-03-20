@@ -16,6 +16,11 @@
   transition: opacity 0.3s ease;
 }
 
+.controls-wrapper.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 /* ==========  TOOLBAR  ========== */
 
 .toolbar-container {
@@ -23,11 +28,6 @@
   align-items: flex-end;
   justify-content: center;
   gap: 30px;
-}
-
-.toolbar-container.is-disabled {
-  opacity: 0.5;
-  pointer-events: none;
 }
 
 /* --- Group Layout --- */
@@ -127,21 +127,23 @@
   padding: 5px 8px;
 }
 
-/* --- Reset Button --- */
+/* --- Action Buttons --- */
+.btn-reset,
+.pagination button,
+.detail-back-actions button {
+  padding: 5px 12px;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
 .btn-reset {
-  /* Branding */
   background-color: #dc3545;
   color: white;
-  font-weight: bold;
-
-  /* Layout */
   border: none;
-  border-radius: 4px;
-  padding: 0 12px;
-  cursor: pointer;
-
-  /* Interaction */
-  transition: background-color 0.2s;
+  font-weight: bold;
 }
 
 .btn-reset:hover:not(:disabled) {
@@ -157,9 +159,8 @@
   visibility: hidden;
 }
 
-/* ==========  POKEMONLIST  ========== */
+/* ==========  POKEMON-LIST  ========== */
 
-/* --- The Grid Container --- */
 .pokemon-grid {
   display: flex;
   flex-wrap: wrap;       
@@ -168,7 +169,7 @@
   padding: 20px;
 }
 
-/* ==========  POKEMONCARD  ========== */
+/* ==========  POKEMON-CARD  ========== */
 
 .badge-container {
   display: flex;
@@ -177,7 +178,6 @@
   flex-wrap: wrap;
 }
 
-/* --- Pokemon Card Styling --- */
 .pokemon-card {
   /* Dimensions */
   width: 170px;          
@@ -247,33 +247,21 @@
 }
 
 .pokemon-name {
-  /* Sizing & Spacing */
   font-size: 1rem;
   font-weight: bold;
   margin: 0 0 6px 0;
-
-  /* Formatting */
   text-transform: uppercase;
 }
 
 /* ==========  PAGINATION  ========== */
 
-/* --- Layout & Alignment --- */
 .pagination-container {
   display: flex; 
   justify-content: center;
 }
 
-/* --- Navigation Controls --- */
-.pagination button {
-  padding: 5px 12px;
-  cursor: pointer;
-  background-color: white;
-  border: 1px solid #dee2e6;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.pagination button.active {
+.pagination button.active,
+.detail-back-actions button.active {
   background-color: #007bff;
   color: white;
   border-color: #007bff;
@@ -292,4 +280,160 @@
   border-radius: 0 4px 4px 0;
 }
 
+/* ==========  POKEMON-DETAIL  ========== */
+
+.detail-view-container {
+  width: 100%;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.detail-back-actions {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* --- Primary Layout --- */
+.detail-stage {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  margin-top: 2rem;
+}
+
+/* --- Navigation Sidebars --- */
+.detail-nav-side {
+  flex: 0 0 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;    
+  justify-content: center; 
+  text-align: center;   
+  gap: 10px;
+}
+
+.nav-label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 5px;     
+}
+
+/* --- Central Info Panel --- */
+.detail-main-panel {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* --- Sprite Showcase --- */
+.detail-sprite-showcase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fbfbfb;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.sprite-row {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+}
+
+/* --- Evolution & Showcase Units --- */
+.sprite-unit {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.sprite-unit img {
+  width: 120px;
+  image-rendering: pixelated;
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.sprite-unit:hover img {
+  transform: scale(1.1);
+}
+
+/* --- Evolution Chain Specifics --- */
+.evolution-chain-container .sprite-unit p {
+  transition: color 0.3s ease;
+}
+
+.evolution-chain-container .sprite-unit:hover p {
+  color: #888;
+}
+
+.evolution-chain-container .sprite-unit::before {
+  content: '';
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 100px;
+  height: 100px;
+  background-color: rgba(0, 0, 0, 0.06);
+  border-radius: 50%;
+  z-index: -1;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.evolution-chain-container .sprite-unit:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+/* --- Info Sections --- */
+.detail-section-title {
+  border-bottom: 2px solid #f0f0f0;
+  font-weight: bold;
+  padding-bottom: 10px;
+  margin: 30px 0 20px 0;
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.detail-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;
+  margin-top: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.info-value {
+  font-size: 1rem;
+  color: #555;
 }

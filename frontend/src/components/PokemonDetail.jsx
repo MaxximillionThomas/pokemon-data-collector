@@ -134,138 +134,173 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
     }
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            {/* Preview - previous Pokemon */}
-            {prevPokemon ? (
-                <div onClick={handlePrev}>
-                    <p>Previous</p>
-                    <PokemonCard pokemon={prevPokemon} onSelect={onSelect} />
-                </div>
-            ) : (
-                <div>
-                    <p>Previous (None)</p>
-                    <PokemonCard pokemon={missingNo} onSelect={() => { }} />
-                </div>)
-            }
+        <div className="detail-view-container">
 
-            {/* Details - current pokemon */}
-            <div>
-                {/* Sprites and basic info */}
-                <section>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        {/* Normal sprites */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
-                            <div>
-                                <img src={pokemon.spriteFront} alt={`${pokemon.name} front`} />
-                                <p>Front</p>
-                            </div>
-
-                            <div>
-                                <img src={pokemon.spriteBack} alt={`${pokemon.name} back`} />
-                                <p>Back</p>
-                            </div>
-                        </div>
-
-                        {/* Shiny sprites */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
-                            <div>
-                                <img src={pokemon.spriteFrontShiny} alt={`${pokemon.name} front shiny`} />
-                                <p>Front (Shiny)</p>
-                            </div>
-
-                            <div>
-                                <img src={pokemon.spriteBackShiny} alt={`${pokemon.name} back shiny`} />
-                                <p>Back (Shiny)</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h1 className="text-capitalize" style={{display: 'flex', justifyContent: 'center', alignItems: 'center',}}><strong>
-                            #{pokemon.id} - {pokemon.name}
-                        </strong></h1>
-
-
-                    </div>
-                </section>
-
-                {/* Pokedex entry and location */}
-                <h2><strong>Pokédex Info</strong></h2>
-                <section>
-                    <h3>Description</h3>
-                    <p>{pokemon.entry.replace(/[\n\f]/g, ' ')}</p>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
-                        <div>
-                            <h3>Habitat</h3>
-                            <div className="text-capitalize">{pokemon.location === 'rare' ? 'Unknown' : pokemon.location}</div>
-                        </div>
-
-                        <div>
-                            <h3>Types</h3>
-                            <div>
-                                {pokemon.types.map(type => (
-                                    <Badge key={type} bg="info" className="me-1 text-capitalize">{type}</Badge>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Evolution chain */}
-                <section>
-                    <h3>Evolution Chain</h3>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '100px' }}>
-                        {evoChain.map((evo) => {
-                            // Get a handle on the full dataset for the evo Pokemon (evo object only holds Name and Id)
-                            const evoData = pokemonArray.find(p => p.id === evo.id);
-
-                            return (
-                                <div key={evo.id} onClick={() => handleEvolutionClick(evo.id)}  style={{cursor:'pointer'}}>
-                                    {evoData && (
-                                        <div>
-                                            <img src={evoData.spriteFront} alt={evo.name} />
-                                            <p className='text-capitalize'>{evo.name}</p>
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
-                </section>
-
-                {/* Abilities and learnset */}
-                <section>
-                    <h2><strong>Technicals</strong></h2>
-                    <h3>Abilities</h3>
-                    <ul>
-                        {pokemon.abilities.map((ability, index) => (
-                            <li key={index} className="text-capitalize">{ability}</li>
-                        ))}
-                    </ul>
-
-                    <h3>Learnset</h3>
-                    <div>
-                        <button onClick={() => setLearnsetVisible(!learnsetVisible)}>
-                            {learnsetVisible ? 'Hide Learnset' : 'View Learnset'}
-                        </button>
-                        {learnsetVisible && <LearnsetTable learnset={pokemon.learnset} />}
-                    </div>
-                </section>
+            {/* Overview button */}
+            <div className="detail-back-actions">
+                <button onClick={() => onSelect(null)}>
+                    ← BACK TO OVERVIEW
+                </button>
             </div>
 
-            {/* Preview - next Pokemon */}
-            {nextPokemon ? (
-                <div onClick={handleNext}>
-                    <p>Next</p>
-                    <PokemonCard pokemon={nextPokemon} onSelect={onSelect} />
-                </div>
-            ) : (
-                <div>
-                    <p>Next (None)</p>
-                    <PokemonCard pokemon={missingNo} onSelect={() => { }} />
-                </div>)
-            }
+            <div className="detail-stage">
+
+                {/* Preview - previous Pokemon */}
+                <aside className="detail-nav-side">
+                    {prevPokemon ? (
+                        <div onClick={handlePrev}>
+                            <span className="nav-label">Previous</span>
+                            <PokemonCard pokemon={prevPokemon} onSelect={onSelect} />
+                        </div>
+                    ) : (
+                        <div>
+                            <span className="nav-label">Previous (None)</span>
+                            <PokemonCard pokemon={missingNo} onSelect={() => {}} />
+                        </div>
+                    )}
+                </aside>
+
+                <main className="detail-main-panel">
+
+                    {/* Name and Id */}
+                    <h1 className="text-center text-capitalize mb-4 fw-bold">
+                        #{pokemon.id} - {pokemon.name}
+                    </h1>
+
+                    {/* Sprites */}
+                    <section className="mt-4">
+                        <div className="detail-sprite-showcase">
+        
+                            {/* Normal sprites */}
+                            <div className="sprite-row mb-3">
+                                <div className="sprite-unit">
+                                    <img src={pokemon.spriteFront} alt={`${pokemon.name} front`} />
+                                    <p>Front</p>
+                                </div>
+
+                                <div className="sprite-unit">
+                                    <img src={pokemon.spriteBack} alt={`${pokemon.name} back`} />
+                                    <p>Back</p>
+                                </div>
+                            </div>
+
+                            {/* Shiny sprites */}
+                            <div className="sprite-row mb-3">
+                                <div className="sprite-unit">
+                                    <img src={pokemon.spriteFrontShiny} alt={`${pokemon.name} front shiny`} />
+                                    <p>Front (Shiny)</p>
+                                </div>
+
+                                <div className="sprite-unit">
+                                    <img src={pokemon.spriteBackShiny} alt={`${pokemon.name} back shiny`} />
+                                    <p>Back (Shiny)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Pokedex info */}
+                    <h2 className="detail-section-title">Pokédex Info</h2>
+                    <section className="mt-4">
+
+                        {/* Description */}
+                        <h3 className="info-label">Description</h3>
+                        <p className="lead">{pokemon.entry.replace(/[\n\f]/g, ' ')}</p>
+                        <div className="detail-info-row">
+
+                            {/* Habitat */}
+                            <div className="info-item">
+                                <h3 className="info-label">Habitat</h3>
+                                <div className="text-capitalize">{pokemon.location === 'rare' ? 'Unknown' : pokemon.location}</div>
+                            </div>
+
+                            {/* Types */}
+                            <div className="info-item">
+                                <h3 className="info-label">Types</h3>
+                                <div className="d-flex gap-2">
+                                    {pokemon.types.map(type => (
+                                        <Badge 
+                                            key={type} 
+                                            bg="info" 
+                                            className="text-capitalize px-3 py-2"
+                                        >
+                                            {type}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Evolution chain */}
+                    <section className="mt-4">
+                        <h3 className="detail-section-title">Evolution Chain</h3>
+                        <div className="evolution-chain-container d-flex justify-content-center gap-4">
+                            {evoChain.map((evo) => {
+                                const evoData = pokemonArray.find(p => p.id === evo.id);
+
+                                return (
+                                    <div 
+                                        key={evo.id} 
+                                        className="sprite-unit" 
+                                        onClick={() => handleEvolutionClick(evo.id)}  
+                                        style={{cursor:'pointer'}}
+                                    >
+                                        {evoData && (
+                                            <div>
+                                                <img src={evoData.spriteFront} alt={evo.name} />
+                                                <p className="text-capitalize fw-bold">{evo.name}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </section>
+
+                    {/* Technicals */}
+                    <h2 className="detail-section-title">Technicals</h2>
+                    <section className="mt-4">
+
+                        {/* Abilities */}
+                        <h3 className="info-label">Abilities</h3>
+                        <ul className="list-unstyled">
+                            {pokemon.abilities.map((ability, index) => (
+                                <li key={index} className="text-capitalize">● {ability}</li>
+                            ))}
+                        </ul>
+
+                        {/* Learnset */}
+                        <h3 className="info-label">Learnset</h3>
+                        <button className="btn btn-outline-primary" onClick={() => setLearnsetVisible(!learnsetVisible)}>
+                            {learnsetVisible ? 'Hide Learnset' : 'View Learnset'}
+                        </button>
+                        
+                        <div className="col-md-6 text-center">
+                            {learnsetVisible && (
+                                <div className="mt-4"> 
+                                    <LearnsetTable learnset={pokemon.learnset} /> 
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                </main>
+
+                {/* Preview - next Pokemon */}
+                <aside className="detail-nav-side">
+                    {nextPokemon ? (
+                        <div onClick={handleNext}>
+                            <span className="nav-label">Next</span>
+                            <PokemonCard pokemon={nextPokemon} onSelect={onSelect} />
+                        </div>
+                    ) : (
+                        <div>
+                            <span className="nav-label">Next (None)</span>
+                            <PokemonCard pokemon={missingNo} onSelect={() => {}} />
+                        </div>
+                    )}
+                </aside>
+            </div>
         </div>
     );
 };

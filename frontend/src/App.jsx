@@ -307,10 +307,6 @@ function App() {
       // Detail page
       ) : selectedPokemon ? (
         <div className="detail-view-container">
-            <div className="detail-back-actions">
-              <button onClick={() => setSelectedPokemon(null)}>Back to list</button>
-            </div>
-
             <PokemonDetail 
               pokemon={selectedPokemon} 
               pokemonArray={pokemonArray}
