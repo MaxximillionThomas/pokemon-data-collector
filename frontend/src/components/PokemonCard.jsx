@@ -41,7 +41,7 @@ export function PokemonCard({ pokemon, onSelect, isShiny }) {
                 {/* Types */}
                 <div className="badge-container">
                     {pokemon.types.map(type => (
-                        <Badge key={type} bg="info" className="me-1 text-capitalize">
+                        <Badge key={type} className={`type-tag type-tag-${type.toLocaleLowerCase()} text-capitalize`}>
                             {type}
                         </Badge>
                     ))}

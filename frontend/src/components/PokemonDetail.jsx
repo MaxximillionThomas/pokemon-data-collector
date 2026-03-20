@@ -36,8 +36,33 @@ import { PokemonCard } from './PokemonCard';
  * @returns {JSX.Element} A detailed view of the selected Pokemon with navigation capabilities.
  */
 export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelect, setCurrentPage, itemsPerPage, setQuery }) {
+    // ==========  Use states  ==========
+
     // Track state of learnset visibility
     const [learnsetVisible, setLearnsetVisible] = useState(false);
+
+    // ==========  Constants  ==========
+
+    // Map out type effectiveness for Weaknesses
+    const LEAF_GREEN_TYPE_CHART = {
+        normal:   { weak: ['fighting'], resist: [], immune: ['ghost'] },
+        fire:     { weak: ['water', 'ground', 'rock'], resist: ['fire', 'grass', 'ice', 'bug', 'steel'], immune: [] },
+        water:    { weak: ['grass', 'electric'], resist: ['fire', 'water', 'ice', 'steel'], immune: [] },
+        grass:    { weak: ['fire', 'ice', 'poison', 'flying', 'bug'], resist: ['water', 'grass', 'electric', 'ground'], immune: [] },
+        electric: { weak: ['ground'], resist: ['electric', 'flying', 'steel'], immune: [] },
+        ice:      { weak: ['fire', 'fighting', 'rock', 'steel'], resist: ['ice'], immune: [] },
+        fighting: { weak: ['flying', 'psychic'], resist: ['bug', 'rock', 'dark'], immune: [] },
+        poison:   { weak: ['ground', 'psychic'], resist: ['grass', 'poison', 'fighting', 'bug'], immune: [] },
+        ground:   { weak: ['water', 'grass', 'ice'], resist: ['poison', 'rock'], immune: ['electric'] },
+        flying:   { weak: ['electric', 'ice', 'rock'], resist: ['grass', 'fighting', 'bug'], immune: ['ground'] },
+        psychic:  { weak: ['bug', 'ghost', 'dark'], resist: ['psychic', 'fighting'], immune: [] },
+        bug:      { weak: ['fire', 'poison', 'flying', 'rock'], resist: ['grass', 'fighting', 'ground'], immune: [] },
+        rock:     { weak: ['water', 'grass', 'fighting', 'ground', 'steel'], resist: ['normal', 'fire', 'poison', 'flying'], immune: [] },
+        ghost:    { weak: ['ghost', 'dark'], resist: ['poison', 'bug'], immune: ['normal', 'fighting'] },
+        dragon:   { weak: ['ice', 'dragon'], resist: ['fire', 'water', 'grass', 'electric'], immune: [] },
+        steel:    { weak: ['fire', 'fighting', 'ground'], resist: ['normal', 'grass', 'ice', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'steel', 'dark'], immune: ['poison'] },
+        dark:     { weak: ['fighting', 'bug'], resist: ['ghost', 'dark'], immune: ['psychic'] }
+    };
 
     // Track overview page PokemonCard index (associated with currently open PokemonDetail)
     const currentIndex = displayedPokemon.findIndex(p => p.id === pokemon.id);
@@ -54,6 +79,8 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
         types: ['???'],
         spriteFront: 'https://s3.pokeos.com/pokeos-uploads/forgotten-dex/pokemon/0-missingNo.png'
     }
+
+    // ==========  Functions  ==========
 
     /**
      * Navigates to the previous Pokémon in the array, updating the page if necessary.
@@ -85,24 +112,103 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
         }
     };
 
+    /**
+     * Recursively traverses an evolution chain object to extract species names and IDs.
+     * @param {Object} chain - The evolution chain node from the PokeAPI.
+     * @param {Object} chain.species - Contains the name and URL for the current evolution stage.
+     * @param {Array} chain.evolves_to - An array of next-stage evolution objects.
+     * @returns {Array<{name: string, id: number}>} An array of objects containing all Pokemon in the chain.
+     */
     function extractEvolutionChain(chain) {
         let results = [];
         results.push({
             // Species identifies the root Pokemon (lowest in the chain)
             name: chain.species.name,
-            // Get the number at the end of the url (ex: https://pokeapi.co/api/v2/pokemon-species/4/)
+            // Get the number at the end of the url (e.g., https://pokeapi.co/api/v2/pokemon-species/4/)
             id: parseInt(chain.species.url.split('/').slice(-2, -1)[0])
         });
 
         // Uses recursion to do the above name/id grab for every evo in the chain, starting from the root (species)
-        // Concatenate the results object (ex: [{name: 'charmander', id: 4}]) with the results of the NEXT call 
+        // Concatenate the results object (e.g., [{name: 'charmander', id: 4}]) with the results of the NEXT call 
         for (const evolution of chain.evolves_to) {
             results = results.concat(extractEvolutionChain(evolution));
         }
 
-        // Only runs when chain.evolves_to iteration is complete (ex: 3/3 evolutions concatenated)
+        // Only runs when chain.evolves_to iteration is complete (e.g., 3/3 evolutions concatenated)
         return results;
     }
+
+    /**
+     * Handles selection of a Pokemon from the evolution chain.
+     * Resets search queries and selects the target Pokemon object from the master array.
+     * @param {number} evolutionId - The Pokedex Id of the evolution stage clicked.
+     */
+    function handleEvolutionClick(evolutionId) {
+        // Identify which Pokemon was clicked in the evo div
+        const targetPokemon = pokemonArray.find(p => p.id === evolutionId);
+
+        // If a Pokemon was found (not a blank evo div clicked)
+        if (targetPokemon) {
+            // Reset overview results and select the Pokemon
+            setQuery('');
+            onSelect(targetPokemon);
+        } 
+    }
+
+/**
+     * Calculates the damage multipliers for every attacking type against the defender's types.
+     * Categorizes results into weaknesses, resistances, and immunities based on the final multiplier.
+     * @param {string[]} pokemonTypes - Array of the current Pokemon's types (e.g., ['Water', 'Flying']).
+     * @returns {Object} An object containing arrays of types categorized by effectiveness.
+     * @returns {string[]} return.weak - Types that deal > 1.0x damage.
+     * @returns {string[]} return.resist - Types that deal > 0.0x and < 1.0x damage.
+     * @returns {string[]} return.immune - Types that deal 0.0x damage.
+     */
+    function getTypeAffinities(pokemonTypes) {
+        const affinities = { weak: [], resist: [], immune:[] };
+        const defenderTypes = pokemonTypes.map(t => t.toLocaleLowerCase());
+
+        // Iterate through each "attacking" type in the chart [fire, water, grass, ...]
+        Object.keys(LEAF_GREEN_TYPE_CHART).forEach(attackerType => {
+            let multiplier = 1.0;
+            
+            /*
+            Check the effectiveness of the attacker type against each of the defenders types.
+            The statement's multiplier is applied if defenderType is found in the array of the current statement.    
+                
+            Example:
+                defenderTypes:  ['water', 'flying']
+                attackerType:   ['grass']
+
+                water type matchups: 
+                    weak:       ['grass', 'electric']           true -> (x2.0)
+                    resist:     ['fire', 'water', 'ice']
+                    immune:     []
+                flying type matchups: 
+                    weak:       ['electric', 'ice', 'rock']
+                    resist:     ['grass', 'fighting', 'bug']    true -> (x0.5)
+                    immune:     ['ground']
+
+                Outcome:        
+                    2.0 x 0.5 = 1.0 multiplier (M) 
+                    Not reported - must match one of [ M > 1 (weakness), 0 < M < 1 (resistance), M === 0 (immunity]               
+            */
+            defenderTypes.forEach(defender => {
+                const defenderChart = LEAF_GREEN_TYPE_CHART[defender];
+                if (defenderChart.weak.includes(attackerType)) multiplier *= 2.0;
+                if (defenderChart.resist.includes(attackerType)) multiplier *= 0.5;
+                if (defenderChart.immune.includes(attackerType)) multiplier *= 0.0;
+            });
+
+            if (multiplier > 1) affinities.weak.push(attackerType); 
+            else if (0 < multiplier && multiplier < 1) affinities.resist.push(attackerType); 
+            else if (multiplier === 0) affinities.immune.push(attackerType); 
+        });
+
+        return affinities;
+    }
+
+    // ==========  Use effects  ==========
 
     // Update the evolution chain
     useEffect(() => {
@@ -118,20 +224,10 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
             }
         }
         fetchChain();
-    // Runs on chain of evolution CHAIN (ex: Charizard (runs) -> Charmeleon (skips))
+    // Runs on chain of evolution CHAIN (e.g.,: Charizard (runs) -> Charmeleon (skips))
     }, [pokemon.evolution_chain_url]);
 
-    function handleEvolutionClick(evolutionId) {
-        // Identify which Pokemon was clicked in the evo div
-        const targetPokemon = pokemonArray.find(p => p.id === evolutionId);
-
-        // If a Pokemon was found (not a blank evo div clicked)
-        if (targetPokemon) {
-            // Reset overview results and select the Pokemon
-            setQuery('');
-            onSelect(targetPokemon);
-        } 
-    }
+    // ==========  Rendering  ==========
 
     return (
         <div className="detail-view-container">
@@ -219,11 +315,7 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                                 <h3 className="info-label">Types</h3>
                                 <div className="d-flex gap-2">
                                     {pokemon.types.map(type => (
-                                        <Badge 
-                                            key={type} 
-                                            bg="info" 
-                                            className="text-capitalize px-3 py-2"
-                                        >
+                                        <Badge key={type} className={`type-tag type-tag-${type.toLocaleLowerCase()} text-capitalize`}                                        >
                                             {type}
                                         </Badge>
                                     ))}
@@ -261,9 +353,49 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                     {/* Technicals */}
                     <h2 className="detail-section-title">Technicals</h2>
                     <section className="mt-4">
+                        <div className="detail-info-row align-items-stretch">
 
+                            {/* Weaknesses */}
+                            <div className="info-item flex-1">
+                                <h3 className="info-label">Weak</h3>
+                                <div className="badge-container mt-2">
+                                    {getTypeAffinities(pokemon.types).weak.map(type => (
+                                        <Badge key={type} className={`type-tag type-tag-${type.toLocaleLowerCase()} text-capitalize`}                                        >
+                                            {type}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Resistances */}
+                            <div className="info-item flex-1">
+                                <h3 className="info-label">Resistant</h3>
+                                <div className="badge-container mt-2">
+                                    {getTypeAffinities(pokemon.types).resist.map(type => (
+                                        <Badge key={type} className={`type-tag type-tag-${type.toLocaleLowerCase()} text-capitalize`}                                        >
+                                            {type}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Immunities */}
+                            <div className="info-item flex-1">
+                                <h3 className="info-label">Immune</h3>
+                                <div className="badge-container mt-2">
+                                    {getTypeAffinities(pokemon.types).immune.length > 0 ? (
+                                        getTypeAffinities(pokemon.types).immune.map(type => (
+                                            <Badge key={type} className={`type-tag type-tag-${type.toLocaleLowerCase()} text-capitalize`}                                        >
+                                                {type}
+                                            </Badge>
+                                        ))
+                                    ) : <Badge className="type-tag type-tag-none">None</Badge>}
+                                </div>
+                            </div>
+                        </div>
+     
                         {/* Abilities */}
-                        <h3 className="info-label">Abilities</h3>
+                        <h3 className="info-label mt-4">Abilities</h3>
                         <ul className="list-unstyled">
                             {pokemon.abilities.map((ability, index) => (
                                 <li key={index} className="text-capitalize">● {ability}</li>
@@ -271,7 +403,7 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                         </ul>
 
                         {/* Learnset */}
-                        <h3 className="info-label">Learnset</h3>
+                        <h3 className="info-label mt-4">Learnset</h3>
                         <button className="btn btn-outline-primary" onClick={() => setLearnsetVisible(!learnsetVisible)}>
                             {learnsetVisible ? 'Hide Learnset' : 'View Learnset'}
                         </button>

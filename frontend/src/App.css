@@ -10,9 +10,9 @@
   /* Unified Visuals */
   background-color: #f8f9fa;
   border-radius: 8px;
-  border: 1px solid #eee;
-
+  
   /* Interaction State */
+  border: 1px solid #8d8d8d;
   transition: opacity 0.3s ease;
 }
 
@@ -60,13 +60,13 @@
   box-sizing: border-box;
 }
 
-/* --- Shared Visuals (White Boxes) --- */
+/* --- Shared Visuals (Input Boxes) --- */
 .toolbar-group input[type="text"], 
 .toolbar-group select,
 .type-dropdown-button {
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: white;
+  background-color: #fbfbfb;
   padding: 4px 8px;
   cursor: pointer;
 }
@@ -139,6 +139,10 @@
   transition: all 0.2s ease;
 }
 
+.detail-back-actions button {
+  border: 1px solid #8d8d8d !important;
+}
+
 .btn-reset {
   background-color: #dc3545;
   color: white;
@@ -171,6 +175,7 @@
 
 /* ==========  POKEMON-CARD  ========== */
 
+/* --- Layout & Alignment --- */
 .badge-container {
   display: flex;
   justify-content: center;
@@ -187,18 +192,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;    
-  justify-content: flex-start; 
+  justify-content: flex-start;
 
   /* Visual Styles */
   padding: 10px;
   box-sizing: border-box;
   cursor: pointer;
-  border: 1px solid #eee;
+  border: 1px solid #8d8d8d !important;
   border-radius: 8px;
-  background-color: white;
+  background-color: #fbfbfb !important;
 
   /* Leak Logic & Interactions */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   overflow: visible !important; 
   margin-top: 40px;
 }
@@ -206,6 +211,7 @@
 .pokemon-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  background-color: #f5f5f5 !important;
 }
 
 .pokemon-card-body {
@@ -223,7 +229,7 @@
   justify-content: center;
 
   /* Offset for "leaking" effect */
-  margin-top: -55px;   
+  margin-top: -55px;
 }
 
 .pokemon-card-img.card-img-top {
@@ -272,13 +278,8 @@
   pointer-events: none;
 }
 
-.pagination button:first-child {
-  border-radius: 4px 0 0 4px;
-}
-
-.pagination button:last-child {
-  border-radius: 0 4px 4px 0;
-}
+.pagination button:first-child { border-radius: 4px 0 0 4px; }
+.pagination button:last-child { border-radius: 0 4px 4px 0; }
 
 /* ==========  POKEMON-DETAIL  ========== */
 
@@ -287,17 +288,18 @@
   animation: fadeIn 0.3s ease-in;
 }
 
-.detail-back-actions {
-  text-align: center;
-  margin-top: 2rem;
-}
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-/* --- Primary Layout --- */
+/* --- Top Actions --- */
+.detail-back-actions {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* --- Primary Layout Stage --- */
 .detail-stage {
   display: flex;
   justify-content: space-between;
@@ -328,9 +330,9 @@
 /* --- Central Info Panel --- */
 .detail-main-panel {
   flex: 1;
-  background: white;
+  background-color: #fbfbfb;
   border-radius: 12px;
-  border: 1px solid #eee;
+  border: 1px solid #8d8d8d;
   padding: 30px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
@@ -340,7 +342,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #fbfbfb;
+  background-color: #f5f5f5;
+  border: 1px solid #8d8d8d;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 25px;
@@ -371,18 +374,11 @@
   z-index: 2;
 }
 
-.sprite-unit:hover img {
-  transform: scale(1.1);
-}
+.sprite-unit:hover img { transform: scale(1.1); }
 
 /* --- Evolution Chain Specifics --- */
-.evolution-chain-container .sprite-unit p {
-  transition: color 0.3s ease;
-}
-
-.evolution-chain-container .sprite-unit:hover p {
-  color: #888;
-}
+.evolution-chain-container .sprite-unit p { transition: color 0.3s ease; }
+.evolution-chain-container .sprite-unit:hover p { color: #888; }
 
 .evolution-chain-container .sprite-unit::before {
   content: '';
@@ -396,7 +392,7 @@
   border-radius: 50%;
   z-index: -1;
   transition: transform 0.3s ease, opacity 0.3s ease;
-  opacity: 0;
+  opacity: 1;
 }
 
 .evolution-chain-container .sprite-unit:hover::before {
@@ -404,7 +400,7 @@
   opacity: 1;
 }
 
-/* --- Info Sections --- */
+/* --- Section Headers & Triple Columns --- */
 .detail-section-title {
   border-bottom: 2px solid #f0f0f0;
   font-weight: bold;
@@ -417,13 +413,24 @@
 .detail-info-row {
   display: flex;
   align-items: flex-start;
-  gap: 60px;
+  gap: 40px;
   margin-top: 20px;
+}
+
+.flex-1 { flex: 1; }
+
+.detail-main-panel .badge-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start !important;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
+  min-height: 80px;
 }
 
 .info-label {
@@ -437,3 +444,55 @@
   font-size: 1rem;
   color: #555;
 }
+
+/* ==========  TYPE COLORS (LEAFGREEN)  ========== */
+
+/* --- Type Badge Base --- */
+.badge.type-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 65px;
+  color: white !important;
+  font-weight: bold;
+  border: none;
+  opacity: 1 !important;
+  letter-spacing: 0.3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-shadow: 
+    -1px -1px 0 rgba(0, 0, 0, 0.2),  
+     1px -1px 0 rgba(0, 0, 0, 0.2),
+    -1px  1px 0 rgba(0, 0, 0, 0.2),
+     1px  1px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* --- Neutral/Empty State Badge --- */
+.badge.type-tag-none {
+  background-color: #e9ecef !important;
+  color: #495057 !important;            
+  border: 1px solid #adb5bd !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  font-weight: bold;
+  min-width: 65px;
+  letter-spacing: 0.5px;
+}
+
+/* --- Type Mapping --- */
+.badge.type-tag-normal { background-color: #A8A878 !important; }
+.badge.type-tag-fire { background-color: #F08030 !important; }
+.badge.type-tag-water { background-color: #6890F0 !important; }
+.badge.type-tag-electric { background-color: #F8D030 !important; }
+.badge.type-tag-grass { background-color: #78C850 !important; }
+.badge.type-tag-ice { background-color: #98D8D8 !important; }
+.badge.type-tag-fighting { background-color: #C03028 !important; }
+.badge.type-tag-poison { background-color: #A040A0 !important; }
+.badge.type-tag-ground { background-color: #E0C068 !important; }
+.badge.type-tag-flying { background-color: #A890F0 !important; }
+.badge.type-tag-psychic { background-color: #F85888 !important; }
+.badge.type-tag-bug { background-color: #A8B820 !important; }
+.badge.type-tag-rock { background-color: #B8A038 !important; }
+.badge.type-tag-ghost { background-color: #705898 !important; }
+.badge.type-tag-dragon { background-color: #7038F8 !important; }
+.badge.type-tag-steel { background-color: #B8B8D0 !important; }
+.badge.type-tag-dark { background-color: #705848 !important; }
