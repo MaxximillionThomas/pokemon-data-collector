@@ -220,116 +220,118 @@ function App() {
   // ==========  Rendering  ==========
 
   return (
-    <div className="container mt-5">
-      {/* Title */}
-      <h1>Pokémon Data Collector</h1>
+    <div className="main-background">
+      <div className="container">
+        {/* Title */}
+        <h1>Pokémon Data Collector</h1>
 
-      <div className="controls-wrapper">
-        
-        {/* Toolbar */}
-        <Toolbar 
-          query={query}                   
-          setQuery={(val) =>updateParams({ q: val, page: 1 })}
+        <div className="controls-wrapper">
+          
+          {/* Toolbar */}
+          <Toolbar 
+            query={query}                   
+            setQuery={(val) =>updateParams({ q: val, page: 1 })}
 
-          sortKey={sortKey}               
-          setSortKey={(val) =>updateParams({ sortKey: val, page: 1 })}
+            sortKey={sortKey}               
+            setSortKey={(val) =>updateParams({ sortKey: val, page: 1 })}
 
-          sortDir={sortDir}               
-          setSortDir={(val) =>updateParams({ sortDir: val, page: 1 })}
+            sortDir={sortDir}               
+            setSortDir={(val) =>updateParams({ sortDir: val, page: 1 })}
 
-          selectedTypes={selectedTypes}   
-          setSelectedTypes={(val) =>updateParams({ types: val.join(','), page: 1 })}
+            selectedTypes={selectedTypes}   
+            setSelectedTypes={(val) =>updateParams({ types: val.join(','), page: 1 })}
 
-          isShiny={isShiny}
-          setIsShiny={(val) =>updateParams({ shiny: (val ? 'true' : null) })}
+            isShiny={isShiny}
+            setIsShiny={(val) =>updateParams({ shiny: (val ? 'true' : null) })}
 
-          resetSearchParams={resetSearchParams}
+            resetSearchParams={resetSearchParams}
 
-          disabled={selectedPokemon ? true : false}
-        />
+            disabled={selectedPokemon ? true : false}
+          />
 
-        {/* Page controls */}
-        <nav className="pagination-container">
-          <ul className="pagination">
-            <button 
-              onClick={() => {
-                const prevPage = currentPage - 1;
-                updateParams({ page: Math.max(prevPage, 1) });
-                setSelectedPokemon(null);
-              }}
-              disabled={currentPage === 1 || selectedPokemon != null}
-            >
-              Prev
-            </button>
-            
-            {pageNumbers.map(page => (
+          {/* Page controls */}
+          <nav className="pagination-container">
+            <ul className="pagination">
               <button 
-                key={page} 
                 onClick={() => {
-                  updateParams({ page: page });
+                  const prevPage = currentPage - 1;
+                  updateParams({ page: Math.max(prevPage, 1) });
                   setSelectedPokemon(null);
                 }}
-                className={currentPage === page ? 'active' : ''}
-                disabled={selectedPokemon ? true : false}
+                disabled={Number(currentPage) === 1 || selectedPokemon != null}
               >
-                {page}
+                Prev
               </button>
-            ))}
-            
-            <button 
-              onClick={() => {
-                const nextPage = Number(currentPage) + 1;
-                updateParams({ page: Math.min(nextPage, totalPages) });
-                setSelectedPokemon(null);
-              }}
-              disabled={currentPage === totalPages || selectedPokemon != null}
-            >
-              Next
-            </button>
-          </ul>
-        </nav>
-      </div>
-
-      {/* Fetch progress message */}
-      {showProgress && (
-        <div>{pokemonArray.length} of {totalPokemon} Pokémon processed.</div>
-      )}
-
-      {/* Results */}
-      {loading ? (
-      // Display loading message until fetch (partially) complete
-        <p>Fetching data...</p>
-
-      // Fetch failure
-      ) : fetchSuccess === false ?  (
-        <p>Failed to fetch Pokemon data.</p>
-
-      // Detail page
-      ) : selectedPokemon ? (
-        <div className="detail-view-container">
-            <PokemonDetail 
-              pokemon={selectedPokemon} 
-              pokemonArray={pokemonArray}
-              displayedPokemon={displayedPokemon}
-              onSelect={setSelectedPokemon}
-              currentPage={currentPage}
-              setCurrentPage={(val) => updateParams({ page: val })}
-              itemsPerPage={itemsPerPage}
-              setQuery={(val) => updateParams({ q: val })}
-            />
+              
+              {pageNumbers.map(page => (
+                <button 
+                  key={page} 
+                  onClick={() => {
+                    updateParams({ page: page });
+                    setSelectedPokemon(null);
+                  }}
+                  className={Number(currentPage) === page ? 'active' : ''}
+                  disabled={selectedPokemon ? true : false}
+                >
+                  {page}
+                </button>
+              ))}
+              
+              <button 
+                onClick={() => {
+                  const nextPage = Number(currentPage) + 1;
+                  updateParams({ page: Math.min(nextPage, totalPages) });
+                  setSelectedPokemon(null);
+                }}
+                disabled={Number(currentPage) === totalPages || selectedPokemon != null}
+              >
+                Next
+              </button>
+            </ul>
+          </nav>
         </div>
 
-      // Overview page
-      ) : paginatedPokemon.length > 0 ? (
-        <PokemonList 
-          pokemonArray={paginatedPokemon}
-          onSelect={setSelectedPokemon}
-          isShiny={isShiny}
-        />
+        {/* Fetch progress message */}
+        {showProgress && (
+          <div>{pokemonArray.length} of {totalPokemon} Pokémon processed.</div>
+        )}
 
-      ) : (
-        <p>Failed to fetch Pokemon data.</p>
-      )}
+        {/* Results */}
+        {loading ? (
+        // Display loading message until fetch (partially) complete
+          <p>Fetching data...</p>
+
+        // Fetch failure
+        ) : fetchSuccess === false ?  (
+          <p>Failed to fetch Pokemon data.</p>
+
+        // Detail page
+        ) : selectedPokemon ? (
+          <div className="detail-view-container">
+              <PokemonDetail 
+                pokemon={selectedPokemon} 
+                pokemonArray={pokemonArray}
+                displayedPokemon={displayedPokemon}
+                onSelect={setSelectedPokemon}
+                currentPage={currentPage}
+                setCurrentPage={(val) => updateParams({ page: val })}
+                itemsPerPage={itemsPerPage}
+                setQuery={(val) => updateParams({ q: val })}
+              />
+          </div>
+
+        // Overview page
+        ) : paginatedPokemon.length > 0 ? (
+          <PokemonList 
+            pokemonArray={paginatedPokemon}
+            onSelect={setSelectedPokemon}
+            isShiny={isShiny}
+          />
+
+        ) : (
+          <p>No results found for search criteria.</p>
+        )}
+      </div>
     </div>
   );
 }

@@ -16,11 +16,12 @@
  */
 export default function SearchInput({ query, setQuery, disabled }) {
     return (
-        <div className="toolbar-group">
+      <div className="toolbar-group">
         <label>Search Pokémon:</label>
 
         <div className="d-flex">
           <input
+            type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Try 'Char' or '6'..."
@@ -28,6 +29,7 @@ export default function SearchInput({ query, setQuery, disabled }) {
           />
 
           <button 
+            className="search-clear"
             onClick={() => setQuery('')} 
             disabled={disabled}
           >
