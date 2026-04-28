@@ -108,8 +108,23 @@ function App() {
             throw error;
           }
 
-          // On fetch success, read the (Pokemon) data as JSON and push it to the state array
+          // On fetch success, store the (Pokemon) JSON data for reference  
           const data = await response.json();
+
+          // Clean Types by replacing dynamically handling removal of 'fairy' Type
+          const hasFairy = data.types.includes('fairy');
+          if (hasFairy) {
+            // If strictly fairy type, REPLACE fairy 
+            if (data.types.length === 1) {
+              data.types = ['normal']
+            
+            // Else REMOVE fairy tag
+            } else {
+              data.types = data.types.filter(type => type !== 'fairy');
+            }
+          } 
+
+          // Push data with cleaned Type to the state array
           setPokemonArray(prev => [...prev, data]);
 
           // After the first update, stop the loading state
@@ -225,7 +240,7 @@ function App() {
         {/* Title */}
         <h1>Pokémon Data Collector</h1>
 
-        <div className="controls-wrapper">
+        <div className="controls-wrapper primary-border">
           
           {/* Toolbar */}
           <Toolbar 

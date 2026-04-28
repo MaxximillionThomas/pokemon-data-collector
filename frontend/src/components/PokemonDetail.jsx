@@ -195,9 +195,9 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
             */
             defenderTypes.forEach(defender => {
                 const defenderChart = LEAF_GREEN_TYPE_CHART[defender];
-                if (defenderChart.weak.includes(attackerType)) multiplier *= 2.0;
-                if (defenderChart.resist.includes(attackerType)) multiplier *= 0.5;
-                if (defenderChart.immune.includes(attackerType)) multiplier *= 0.0;
+                if (defenderChart?.weak?.includes(attackerType)) multiplier *= 2.0;
+                if (defenderChart?.resist?.includes(attackerType)) multiplier *= 0.5;
+                if (defenderChart?.immune?.includes(attackerType)) multiplier *= 0.0;
             });
 
             if (multiplier > 1) affinities.weak.push(attackerType); 
@@ -256,7 +256,7 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                     )}
                 </aside>
 
-                <main className="detail-main-panel">
+                <main className="detail-main-panel primary-border">
 
                     {/* Name and Id */}
                     <h1 className="text-center text-capitalize mb-4 fw-bold">
