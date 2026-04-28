@@ -33,9 +33,10 @@ import { PokemonCard } from './PokemonCard';
  * @param {Function} props.setCurrentPage - Callback to update the 'page' parameter in the URL. 
  * @param {number} props.itemsPerPage - Number of items shown per page.
  * @param {Function} props.setQuery - Callback to update the 'q' parameter in the URL and reset search filters. 
+ * @param {Object} props.missingNo - The static bookend data object used when no previous/next Pokemon exists.
  * @returns {JSX.Element} A detailed view of the selected Pokemon with navigation capabilities.
  */
-export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelect, setCurrentPage, itemsPerPage, setQuery }) {
+export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelect, setCurrentPage, itemsPerPage, setQuery, missingNo }) {
     // ==========  Use states  ==========
 
     // Track state of learnset visibility
@@ -71,14 +72,6 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
 
     // Evolution chain
     const [evoChain, setEvoChain] = useState([]);
-
-    // Book-end Pokemon
-    const missingNo = {
-        id: '???',
-        name: 'MissingNo.',
-        types: ['???'],
-        spriteFront: 'https://s3.pokeos.com/pokeos-uploads/forgotten-dex/pokemon/0-missingNo.png'
-    }
 
     // ==========  Functions  ==========
 
@@ -246,12 +239,20 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                     {prevPokemon ? (
                         <div onClick={handlePrev}>
                             <span className="nav-label">Previous</span>
-                            <PokemonCard pokemon={prevPokemon} onSelect={onSelect} />
+                            <PokemonCard 
+                                pokemon={prevPokemon} 
+                                onSelect={onSelect}
+                                isStatic={false}
+                            />
                         </div>
                     ) : (
                         <div>
                             <span className="nav-label">Previous (None)</span>
-                            <PokemonCard pokemon={missingNo} onSelect={() => {}} />
+                            <PokemonCard 
+                                pokemon={missingNo} 
+                                onSelect={() => {}} 
+                                isStatic={true}
+                            />
                         </div>
                     )}
                 </aside>

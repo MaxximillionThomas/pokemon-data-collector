@@ -261,6 +261,16 @@
   flex-wrap: wrap;
 }
 
+/* ==========  POKEMON-CARD  ========== */
+
+/* --- Layout & Alignment --- */
+.badge-container {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
 .pokemon-card {
   width: 170px;
   min-height: 160px;
@@ -283,27 +293,25 @@
   border-radius: 18px;
 
   /* 3. The Layered Pixel Aesthetic */
-  /* Inset frames creating the handheld console window look */
   box-shadow: 
     inset 0 0 0 5px #ffffff, 
     inset 0 0 0 7px #2d2d2d;
 }
 
-.pokemon-card:hover {
+/* --- Static Bookend Overrides --- */
+.pokemon-card.is-static {
+  cursor: default !important;
+  pointer-events: none;
+}
+
+/* Prevents the pop-out and highlight effects on non-navigable cards */
+.pokemon-card:hover:not(.is-static) {
   transform: translateY(-4px);
-  /* Maintain the frames while adding the external drop-shadow */
   box-shadow: 
     inset 0 0 0 5px #ffffff, 
     inset 0 0 0 7px #2d2d2d,
-    0 8px 20px rgba(0,0,0,0.3);
+    0 8px 20px rgba(0,0,0,0.12);
   background-color: #eaeaea !important;
-}
-
-.pokemon-card-body {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 /* --- Sprite Container --- */

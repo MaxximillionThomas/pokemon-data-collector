@@ -18,11 +18,14 @@ import { Card, Badge } from 'react-bootstrap';
  * @param {string} props.pokemon.spriteFront - URL to the Pokemon sprite (front).
  * @param {Function} props.onSelect - Callback function to handle selecting a Pokemon for the detail view.
  * @param {boolean} props.isShiny - Indicates whether to display the shiny versions of Pokemon sprites.
+ * @param {boolean} props.isStatic - If true, disables all hover effects, cursor changes, and click events for bookend cards.
  * @returns {JSX.Element} The rendered Pokemon card component.
  */
-export function PokemonCard({ pokemon, onSelect, isShiny }) {
+export function PokemonCard({ pokemon, onSelect, isShiny, isStatic }) {
+    const cardClass = `pokemon-card ${isStatic ? 'is-static' : ''}`;
+
     return (
-        <Card className="pokemon-card" onClick={() => onSelect(pokemon)} >
+        <Card className={cardClass} onClick={isStatic ? null : () => onSelect(pokemon)} >
 
             {/* Sprite container */}
             <div className="pokemon-sprite-container">
@@ -30,6 +33,7 @@ export function PokemonCard({ pokemon, onSelect, isShiny }) {
                     className="pokemon-card-img"
                     src={isShiny ? pokemon.spriteFrontShiny : pokemon.spriteFront} 
                     alt={pokemon.name} 
+                    crossOrigin="anonymous"
                 />
             </div>
 

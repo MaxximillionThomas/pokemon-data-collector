@@ -20,6 +20,7 @@ function App() {
   // Overview / detailed views
   const [pokemonArray, setPokemonArray] = useState([]);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [missingNo, setMissingNo] = useState(null);
 
   // Rendering support
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,7 @@ function App() {
   const sortDir = searchParams.get('sortDir') ?? 'asc';
   const selectedTypes = searchParams.get('types') ? searchParams.get('types').split(',') : [];
   const isShiny = searchParams.get('shiny') === 'true';
-  
+
   // Pagination
   const currentPage = searchParams.get('page') ?? '1';
 
@@ -93,17 +94,30 @@ function App() {
 
     // Use an async function to handle individual Pokemon data fetches
     const loadPokedex = async () => {
-      // Target the CloudFront distribution for the S3 bucket 
-      const CLOUDFRONT_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-data/';
+      // Target the CloudFront distribution for the S3 bucket (DATA / SPRITE folders)
+      const DATA_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-data/';
+      const SPRITE_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-sprites/';
 
+      // === Id 0 (custom sprite only - no JSON object) ===  
+      // Store the bookend sprite (not subject to change in S3) to a custom JSON object
+      const missingNoData = {
+        id: '???',
+        name: 'MissingNo.',
+        types: ['???'],
+        spriteFront: `${SPRITE_URL}0.png`
+      };
+
+      setMissingNo(missingNoData);
+
+      // === Id 1 to 151 === 
       // Iterate through each Pokemond Id up to the limit of totalPokemon (data files are saved in the format '#.json')
       for (let pokemon_id = 1; pokemon_id <= totalPokemon; pokemon_id++) {
         try {
-          const response = await fetch(`${CLOUDFRONT_URL}${pokemon_id}.json`);
-          
+          const response = await fetch(`${DATA_URL}${pokemon_id}.json`);
+
           // Handle fetch failure (1/2)
           if (!response.ok) {
-            const error = new Error(`Status ${response.status}`);
+            const error = new Error(`Status (Id ${pokemon_id}) ${response.status}`);
             error.type = 'HTTP_ERROR';
             throw error;
           }
@@ -117,12 +131,12 @@ function App() {
             // If strictly fairy type, REPLACE fairy 
             if (data.types.length === 1) {
               data.types = ['normal']
-            
+
             // Else REMOVE fairy tag
             } else {
               data.types = data.types.filter(type => type !== 'fairy');
             }
-          } 
+          }
 
           // Push data with cleaned Type to the state array
           setPokemonArray(prev => [...prev, data]);
@@ -132,12 +146,13 @@ function App() {
 
           // Enable rendering
           setFetchSuccess(true);
-          
+
         // Handle fetch failure (2/2)
         } catch (error) {
           // Handle HTTP status errors (e.g., 404, 500) thrown in 'then' block
           if (error.type === 'HTTP_ERROR') {
             console.log(`API request failed with status code: ${error.message}.`);
+
           // Handle connectivity, DNS, or security/CORS failures
           } else {
             console.log('Network or CORS issue. Check CloudFront/S3 policy.');
@@ -217,20 +232,20 @@ function App() {
 
   // Determine new page numbers (5 shown at a time)
   const pageNumbers = useMemo(() => {
-      let start = Math.max(1, currentPage - 2);
-      let end = Math.min(totalPages, start + 4);
-      
-      if (end - start < 4) {
-        start = Math.max(1, end - 4);
-      }
-      
-      let pages = [];
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
-      return pages;
-    // Run on change of current page or result set (indirectly)
-    }, [currentPage, totalPages]);
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + 4);
+
+    if (end - start < 4) {
+      start = Math.max(1, end - 4);
+    }
+
+    let pages = [];
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  // Run on change of current page or result set (indirectly)
+  }, [currentPage, totalPages]);
 
   // ==========  Rendering  ==========
 
@@ -241,23 +256,23 @@ function App() {
         <h1>Pokémon Data Collector</h1>
 
         <div className="controls-wrapper primary-border">
-          
+
           {/* Toolbar */}
-          <Toolbar 
-            query={query}                   
-            setQuery={(val) =>updateParams({ q: val, page: 1 })}
+          <Toolbar
+            query={query}
+            setQuery={(val) => updateParams({ q: val, page: 1 })}
 
-            sortKey={sortKey}               
-            setSortKey={(val) =>updateParams({ sortKey: val, page: 1 })}
+            sortKey={sortKey}
+            setSortKey={(val) => updateParams({ sortKey: val, page: 1 })}
 
-            sortDir={sortDir}               
-            setSortDir={(val) =>updateParams({ sortDir: val, page: 1 })}
+            sortDir={sortDir}
+            setSortDir={(val) => updateParams({ sortDir: val, page: 1 })}
 
-            selectedTypes={selectedTypes}   
-            setSelectedTypes={(val) =>updateParams({ types: val.join(','), page: 1 })}
+            selectedTypes={selectedTypes}
+            setSelectedTypes={(val) => updateParams({ types: val.join(','), page: 1 })}
 
             isShiny={isShiny}
-            setIsShiny={(val) =>updateParams({ shiny: (val ? 'true' : null) })}
+            setIsShiny={(val) => updateParams({ shiny: (val ? 'true' : null) })}
 
             resetSearchParams={resetSearchParams}
 
@@ -267,7 +282,7 @@ function App() {
           {/* Page controls */}
           <nav className="pagination-container">
             <ul className="pagination">
-              <button 
+              <button
                 onClick={() => {
                   const prevPage = currentPage - 1;
                   updateParams({ page: Math.max(prevPage, 1) });
@@ -277,10 +292,10 @@ function App() {
               >
                 Prev
               </button>
-              
+
               {pageNumbers.map(page => (
-                <button 
-                  key={page} 
+                <button
+                  key={page}
                   onClick={() => {
                     updateParams({ page: page });
                     setSelectedPokemon(null);
@@ -291,8 +306,8 @@ function App() {
                   {page}
                 </button>
               ))}
-              
-              <button 
+
+              <button
                 onClick={() => {
                   const nextPage = Number(currentPage) + 1;
                   updateParams({ page: Math.min(nextPage, totalPages) });
@@ -313,31 +328,32 @@ function App() {
 
         {/* Results */}
         {loading ? (
-        // Display loading message until fetch (partially) complete
+          // Display loading message until fetch (partially) complete
           <p>Fetching data...</p>
 
         // Fetch failure
-        ) : fetchSuccess === false ?  (
+        ) : fetchSuccess === false ? (
           <p>Failed to fetch Pokemon data.</p>
 
         // Detail page
         ) : selectedPokemon ? (
           <div className="detail-view-container">
-              <PokemonDetail 
-                pokemon={selectedPokemon} 
-                pokemonArray={pokemonArray}
-                displayedPokemon={displayedPokemon}
-                onSelect={setSelectedPokemon}
-                currentPage={currentPage}
-                setCurrentPage={(val) => updateParams({ page: val })}
-                itemsPerPage={itemsPerPage}
-                setQuery={(val) => updateParams({ q: val })}
-              />
+            <PokemonDetail
+              pokemon={selectedPokemon}
+              pokemonArray={pokemonArray}
+              displayedPokemon={displayedPokemon}
+              onSelect={setSelectedPokemon}
+              currentPage={currentPage}
+              setCurrentPage={(val) => updateParams({ page: val })}
+              itemsPerPage={itemsPerPage}
+              setQuery={(val) => updateParams({ q: val })}
+              missingNo={missingNo}
+            />
           </div>
 
         // Overview page
         ) : paginatedPokemon.length > 0 ? (
-          <PokemonList 
+          <PokemonList
             pokemonArray={paginatedPokemon}
             onSelect={setSelectedPokemon}
             isShiny={isShiny}
