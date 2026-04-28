@@ -3,9 +3,32 @@
 .main-background {
   background-color: #f2dddd; 
   margin: 0;
-  padding-top: 2rem;
+  padding-top: 1rem;
   padding-bottom: 3rem;
   min-height: 100vh;
+}
+
+/* ==========  LOGO  ========== */
+
+/* --- Logo Container & Size Control --- */
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0px;
+  margin-bottom: 1.5rem;
+}
+
+.main-logo {
+  /* Dimensions */
+  max-width: 400px;
+  width: 100%;
+  height: auto;
+  
+  /* Rendering */
+  image-rendering: auto;
+  object-fit: contain;
 }
 
 /* ==========  BORDERS  ========== */
@@ -253,17 +276,6 @@
 /* ==========  POKEMON-CARD  ========== */
 
 /* --- Layout & Alignment --- */
-
-.badge-container {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  flex-wrap: wrap;
-}
-
-/* ==========  POKEMON-CARD  ========== */
-
-/* --- Layout & Alignment --- */
 .badge-container {
   display: flex;
   justify-content: center;
@@ -296,6 +308,13 @@
   box-shadow: 
     inset 0 0 0 5px #ffffff, 
     inset 0 0 0 7px #2d2d2d;
+}
+
+.pokemon-card-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* --- Static Bookend Overrides --- */

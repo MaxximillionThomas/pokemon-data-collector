@@ -53,24 +53,6 @@ def fetch_pokemon_data(pokemon_id):
             'spriteBack': frlg_sprites['back_default'],
             'spriteFrontShiny': frlg_sprites['front_shiny'],
             'spriteBackShiny': frlg_sprites['back_shiny'],
-            'abilities': [a['ability']['name'] for a in main_data['abilities']],
-            # Moves that the Pokemon learns 
-            'learnset': [
-                # Iterate through 2 sets of data simultaneously, saving the pairs where the conditions are met
-                {
-                    # Saved pair 1
-                    'move': m['move']['name'],
-                    # Saved pair 2
-                    'level': detail['level_learned_at']
-                }
-                # Iteration set 1
-                for m in main_data['moves']
-                # Iteration set 2
-                for detail in m['version_group_details']
-                # Conditions (Gen 1 only, and learned from leveling up)
-                if detail['version_group']['name'] == 'red-blue'
-                and detail['move_learn_method']['name'] == 'level-up'
-            ],
             # Pokedex entry (description) - must be in English and Gen 1
             'entry': next(
                 # Description (ex: 'Cuando lanza una descarga de fuego supercaliente')

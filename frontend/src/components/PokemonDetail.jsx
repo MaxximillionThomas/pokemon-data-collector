@@ -1,14 +1,13 @@
 /**
  * Project:       Pokemon Data Collector
  * File:          PokemonDetail.jsx
- * @description   Detailed view component displaying species info, evolution, and learnsets.
+ * @description   Detailed view component displaying species info, evolutions, and type matchups.
  * @author        Maxximillion Thomas
  * @date          March 4, 2026
  */
 
 import { useEffect, useState } from 'react';
 import { Badge } from 'react-bootstrap';
-import { LearnsetTable } from './LearnsetTable';
 import { PokemonCard } from './PokemonCard';
 
 /**
@@ -25,7 +24,6 @@ import { PokemonCard } from './PokemonCard';
  * @param {string} props.pokemon.entry - Pokedex entry (description of the Pokemon).
  * @param {string} props.pokemon.location - Pokemon habitat/location.
  * @param {string[]} props.pokemon.abilities - List of abilities.
- * @param {Array<Object>} props.pokemon.learnset - List of moves and levels learned at.
  * @param {string} props.pokemon.evolution_chain_url - API endpoint URL to fetch evolution chain data.
  * @param {Array<Object>} props.pokemonArray - The full list of Pokémon.
  * @param {Array<Object>} props.displayedPokemon - The currently filtered/sorted list for navigation.
@@ -37,11 +35,6 @@ import { PokemonCard } from './PokemonCard';
  * @returns {JSX.Element} A detailed view of the selected Pokemon with navigation capabilities.
  */
 export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelect, setCurrentPage, itemsPerPage, setQuery, missingNo }) {
-    // ==========  Use states  ==========
-
-    // Track state of learnset visibility
-    const [learnsetVisible, setLearnsetVisible] = useState(false);
-
     // ==========  Constants  ==========
 
     // Map out type effectiveness for Weaknesses
@@ -205,7 +198,6 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
 
     // Update the evolution chain
     useEffect(() => {
-        console.log(pokemon.evolution_chain_url);
         async function fetchChain() {
             try {
                 const response = await fetch(pokemon.evolution_chain_url);
@@ -351,9 +343,9 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                         </div>
                     </section>
 
-                    {/* Technicals */}
-                    <h2 className="detail-section-title">Technicals</h2>
-                    <section className="mt-4">
+                    {/* Type Matchups */}
+                    <h2 className="detail-section-title">Type Matchups</h2>
+                    <section className="mt-4 mb-3">
                         <div className="detail-info-row align-items-stretch">
 
                             {/* Weaknesses */}
@@ -393,28 +385,6 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                                     ) : <Badge className="type-tag type-tag-none">None</Badge>}
                                 </div>
                             </div>
-                        </div>
-     
-                        {/* Abilities */}
-                        <h3 className="info-label mt-4">Abilities</h3>
-                        <ul className="list-unstyled">
-                            {pokemon.abilities.map((ability, index) => (
-                                <li key={index} className="text-capitalize">● {ability}</li>
-                            ))}
-                        </ul>
-
-                        {/* Learnset */}
-                        <h3 className="info-label mt-4">Learnset</h3>
-                        <button className="btn btn-outline-primary" onClick={() => setLearnsetVisible(!learnsetVisible)}>
-                            {learnsetVisible ? 'Hide Learnset' : 'View Learnset'}
-                        </button>
-                        
-                        <div className="col-md-6 text-center">
-                            {learnsetVisible && (
-                                <div className="mt-4"> 
-                                    <LearnsetTable learnset={pokemon.learnset} /> 
-                                </div>
-                            )}
                         </div>
                     </section>
                 </main>

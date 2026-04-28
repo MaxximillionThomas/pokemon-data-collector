@@ -43,6 +43,13 @@ function App() {
   // Pagination
   const currentPage = searchParams.get('page') ?? '1';
 
+  // ==========  CloudFront  ==========
+
+  // Target the CloudFront distribution for the S3 bucket (DATA / SPRITE folders, LOGO file)
+  const DATA_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-data/';
+  const SPRITE_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-sprites/';
+  const LOGO_URL = 'https://d1xb64xlhesy7f.cloudfront.net/assets/logo.png';
+
   /**
    * Updates the browser's URL search parameters with new values.
    * Merges the provided parameters into the existing search state and 
@@ -94,9 +101,6 @@ function App() {
 
     // Use an async function to handle individual Pokemon data fetches
     const loadPokedex = async () => {
-      // Target the CloudFront distribution for the S3 bucket (DATA / SPRITE folders)
-      const DATA_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-data/';
-      const SPRITE_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-sprites/';
 
       // === Id 0 (custom sprite only - no JSON object) ===  
       // Store the bookend sprite (not subject to change in S3) to a custom JSON object
@@ -253,7 +257,14 @@ function App() {
     <div className="main-background">
       <div className="container">
         {/* Title */}
-        <h1>Pokémon Data Collector</h1>
+        <div className="logo-container">
+          <img 
+            src={LOGO_URL} 
+            className="main-logo" 
+            alt="Pokémon Data Collector logo" 
+            crossOrigin="anonymous" 
+          />
+        </div>
 
         <div className="controls-wrapper primary-border">
 
