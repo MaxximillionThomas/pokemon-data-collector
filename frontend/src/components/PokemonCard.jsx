@@ -34,6 +34,7 @@ export function PokemonCard({ pokemon, onSelect, isShiny, isStatic }) {
                     src={isShiny ? pokemon.spriteFrontShiny : pokemon.spriteFront} 
                     alt={pokemon.name} 
                     crossOrigin="anonymous"
+                    loading="lazy"
                 />
             </div>
 

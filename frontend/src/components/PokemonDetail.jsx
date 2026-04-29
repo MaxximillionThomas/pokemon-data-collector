@@ -28,13 +28,12 @@ import { PokemonCard } from './PokemonCard';
  * @param {Array<Object>} props.pokemonArray - The full list of Pokémon.
  * @param {Array<Object>} props.displayedPokemon - The currently filtered/sorted list for navigation.
  * @param {Function} props.onSelect - Callback to change the selected Pokémon in App state.
- * @param {Function} props.setCurrentPage - Callback to update the 'page' parameter in the URL. 
  * @param {number} props.itemsPerPage - Number of items shown per page.
  * @param {Function} props.setQuery - Callback to update the 'q' parameter in the URL and reset search filters. 
  * @param {Object} props.missingNo - The static bookend data object used when no previous/next Pokemon exists.
  * @returns {JSX.Element} A detailed view of the selected Pokemon with navigation capabilities.
  */
-export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelect, setCurrentPage, itemsPerPage, setQuery, missingNo }) {
+export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelect, itemsPerPage, setQuery, missingNo }) {
     // ==========  Constants  ==========
 
     // Map out type effectiveness for Weaknesses
@@ -78,8 +77,8 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
             const newIndex = currentIndex - 1;
             const newPage = Math.floor(newIndex / itemsPerPage) + 1
 
-            setCurrentPage(newPage);
-            onSelect(prevPokemon);
+            // Update URL with Pokemon Id and new page number
+            onSelect(prevPokemon, newPage);
         }
     }
 
@@ -89,12 +88,12 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
     function handleNext() {
         // There must be a Pokemon found at {pokemonArray[nextPokemon]}
         if (nextPokemon) {
-            // Determine which page the  NEXT Pokemon should be found on
+            // Determine which page the NEXT Pokemon should be found on
             const newIndex = currentIndex + 1;
             const newPage = Math.floor(newIndex / itemsPerPage) + 1
 
-            setCurrentPage(newPage);
-            onSelect(nextPokemon);
+            // Update URL with Pokemon Id and new page number
+            onSelect(nextPokemon, newPage);
         }
     };
 
@@ -141,7 +140,7 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
         } 
     }
 
-/**
+    /**
      * Calculates the damage multipliers for every attacking type against the defender's types.
      * Categorizes results into weaknesses, resistances, and immunities based on the final multiplier.
      * @param {string[]} pokemonTypes - Array of the current Pokemon's types (e.g., ['Water', 'Flying']).
@@ -229,11 +228,11 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                 {/* Preview - previous Pokemon */}
                 <aside className="detail-nav-side">
                     {prevPokemon ? (
-                        <div onClick={handlePrev}>
+                        <div>
                             <span className="nav-label">Previous</span>
                             <PokemonCard 
                                 pokemon={prevPokemon} 
-                                onSelect={onSelect}
+                                onSelect={handlePrev}
                                 isStatic={false}
                             />
                         </div>
@@ -392,14 +391,22 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                 {/* Preview - next Pokemon */}
                 <aside className="detail-nav-side">
                     {nextPokemon ? (
-                        <div onClick={handleNext}>
+                        <div>
                             <span className="nav-label">Next</span>
-                            <PokemonCard pokemon={nextPokemon} onSelect={onSelect} />
+                            <PokemonCard 
+                                pokemon={nextPokemon} 
+                                onSelect={handleNext} 
+                                isStatic={false} 
+                            />
                         </div>
                     ) : (
                         <div>
                             <span className="nav-label">Next (None)</span>
-                            <PokemonCard pokemon={missingNo} onSelect={() => {}} />
+                            <PokemonCard 
+                                pokemon={missingNo} 
+                                onSelect={() => {}} 
+                                isStatic={true}
+                            />
                         </div>
                     )}
                 </aside>

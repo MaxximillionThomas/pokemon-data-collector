@@ -31,6 +31,13 @@ function App() {
   // URL syncing
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // ==========  CloudFront  ==========
+
+  // Target the CloudFront distribution for the S3 bucket (DATA / SPRITE folders, LOGO file)
+  const DATA_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-data/';
+  const SPRITE_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-sprites/';
+  const LOGO_URL = 'https://d1xb64xlhesy7f.cloudfront.net/assets/logo.png';
+
   // ==========  URL syncing  ==========
 
   // Toolbar
@@ -43,12 +50,8 @@ function App() {
   // Pagination
   const currentPage = searchParams.get('page') ?? '1';
 
-  // ==========  CloudFront  ==========
-
-  // Target the CloudFront distribution for the S3 bucket (DATA / SPRITE folders, LOGO file)
-  const DATA_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-data/';
-  const SPRITE_URL = 'https://d1xb64xlhesy7f.cloudfront.net/pokemon-sprites/';
-  const LOGO_URL = 'https://d1xb64xlhesy7f.cloudfront.net/assets/logo.png';
+  // PokemonDetail
+  const selectedId = searchParams.get('id');
 
   /**
    * Updates the browser's URL search parameters with new values.
@@ -87,6 +90,31 @@ function App() {
   function resetSearchParams() {
     setSearchParams({});
   }
+
+  // Sync selectedPokemon state object with the Id in the URL
+  useEffect(() => {
+    // Wait until data is loaded
+    if (pokemonArray.length === 0) return;
+
+    // User has specified an Id
+    if (selectedId) {
+      // Protect against non-existent Ids
+      const found = pokemonArray.find(p => p.id.toString() === selectedId);
+
+      if (found) {
+        setSelectedPokemon(found);
+      } else {
+        // Reset to list view
+        setSelectedPokemon(null);
+        updateParams({ id: null });
+      }
+
+    // No Id specified -> show list view
+    } else {
+      setSelectedPokemon(null);
+    }
+  // pokemonArray needed for users first opening PokemonDetail through direct link (0/151 processed)
+  }, [selectedId, pokemonArray]);
 
   // ==========  Data fetching  ==========
 
@@ -351,11 +379,15 @@ function App() {
           <div className="detail-view-container">
             <PokemonDetail
               pokemon={selectedPokemon}
+              onSelect={(pokemon, page=null) => {
+                const updates = { id: pokemon?.id || null };
+                if (page) updates.page = page;
+
+                updateParams(updates);
+              }}
               pokemonArray={pokemonArray}
               displayedPokemon={displayedPokemon}
-              onSelect={setSelectedPokemon}
               currentPage={currentPage}
-              setCurrentPage={(val) => updateParams({ page: val })}
               itemsPerPage={itemsPerPage}
               setQuery={(val) => updateParams({ q: val })}
               missingNo={missingNo}
@@ -366,7 +398,7 @@ function App() {
         ) : paginatedPokemon.length > 0 ? (
           <PokemonList
             pokemonArray={paginatedPokemon}
-            onSelect={setSelectedPokemon}
+            onSelect={(p) => updateParams({ id: p.id })}
             isShiny={isShiny}
           />
 
