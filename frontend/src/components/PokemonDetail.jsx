@@ -211,6 +211,11 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
     // Runs on chain of evolution CHAIN (e.g.,: Charizard (runs) -> Charmeleon (skips))
     }, [pokemon.evolution_chain_url]);
 
+    // ==========  Setup  ==========
+
+    // Map out the [weaknesses, resistances, and immunities] of the Pokemon
+    const affinities = getTypeAffinities(pokemon.types);
+
     // ==========  Rendering  ==========
 
     return (
@@ -218,42 +223,46 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
 
             {/* Overview button */}
             <div className="detail-back-actions">
-                <button onClick={() => onSelect(null)}>
-                    ← BACK TO OVERVIEW
-                </button>
+                <div className="sticky-header-content">
+                    <button onClick={() => onSelect(null)} >
+                        ← BACK TO OVERVIEW
+                    </button>
+
+                    {/* Name and Id */}
+                    <h1 className="text-center text-capitalize mb-0 fw-bold">
+                        #{pokemon.id} - {pokemon.name}
+                    </h1>
+                </div>
             </div>
 
             <div className="detail-stage">
 
                 {/* Preview - previous Pokemon */}
                 <aside className="detail-nav-side">
-                    {prevPokemon ? (
-                        <div>
-                            <span className="nav-label">Previous</span>
-                            <PokemonCard 
-                                pokemon={prevPokemon} 
-                                onSelect={handlePrev}
-                                isStatic={false}
-                            />
-                        </div>
-                    ) : (
-                        <div>
-                            <span className="nav-label">Previous (None)</span>
-                            <PokemonCard 
-                                pokemon={missingNo} 
-                                onSelect={() => {}} 
-                                isStatic={true}
-                            />
-                        </div>
-                    )}
+                    <div className="sticky-nav-wrapper">
+                        {prevPokemon ? (
+                            <div>
+                                <span className="nav-label">Previous</span>
+                                <PokemonCard 
+                                    pokemon={prevPokemon} 
+                                    onSelect={handlePrev}
+                                    isStatic={false}
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <span className="nav-label">Previous (None)</span>
+                                <PokemonCard 
+                                    pokemon={missingNo} 
+                                    onSelect={() => {}} 
+                                    isStatic={true}
+                                />
+                            </div>
+                        )}
+                    </div>
                 </aside>
 
                 <main className="detail-main-panel primary-border">
-
-                    {/* Name and Id */}
-                    <h1 className="text-center text-capitalize mb-4 fw-bold">
-                        #{pokemon.id} - {pokemon.name}
-                    </h1>
 
                     {/* Sprites */}
                     <section className="mt-4">
@@ -351,11 +360,13 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                             <div className="info-item flex-1">
                                 <h3 className="info-label">Weak</h3>
                                 <div className="badge-container mt-2">
-                                    {getTypeAffinities(pokemon.types).weak.map(type => (
-                                        <Badge key={type} className={`type-tag type-tag-${type.toLocaleLowerCase()} text-capitalize`}                                        >
-                                            {type}
-                                        </Badge>
-                                    ))}
+                                    {affinities.weak.length > 0 ? (
+                                        affinities.weak.map(type => (
+                                            <Badge key={type} className={`type-tag type-tag-${type.toLocaleLowerCase()} text-capitalize`}>
+                                                {type}
+                                            </Badge>
+                                        ))
+                                    ) : <Badge className="type-tag type-tag-none">None</Badge>}
                                 </div>
                             </div>
 
@@ -363,11 +374,13 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                             <div className="info-item flex-1">
                                 <h3 className="info-label">Resistant</h3>
                                 <div className="badge-container mt-2">
-                                    {getTypeAffinities(pokemon.types).resist.map(type => (
-                                        <Badge key={type} className={`type-tag type-tag-${type.toLocaleLowerCase()} text-capitalize`}                                        >
-                                            {type}
-                                        </Badge>
-                                    ))}
+                                    {affinities.resist.length > 0 ? (
+                                        affinities.resist.map(type => (
+                                            <Badge key={type} className={`type-tag type-tag-${type.toLocaleLowerCase()} text-capitalize`}>
+                                                {type}
+                                            </Badge>
+                                        ))
+                                    ) : <Badge className="type-tag type-tag-none">None</Badge>}
                                 </div>
                             </div>
 
@@ -375,8 +388,8 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                             <div className="info-item flex-1">
                                 <h3 className="info-label">Immune</h3>
                                 <div className="badge-container mt-2">
-                                    {getTypeAffinities(pokemon.types).immune.length > 0 ? (
-                                        getTypeAffinities(pokemon.types).immune.map(type => (
+                                    {affinities.immune.length > 0 ? (
+                                        affinities.immune.map(type => (
                                             <Badge key={type} className={`type-tag type-tag-${type.toLocaleLowerCase()} text-capitalize`}                                        >
                                                 {type}
                                             </Badge>
@@ -390,25 +403,27 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
 
                 {/* Preview - next Pokemon */}
                 <aside className="detail-nav-side">
-                    {nextPokemon ? (
-                        <div>
-                            <span className="nav-label">Next</span>
-                            <PokemonCard 
-                                pokemon={nextPokemon} 
-                                onSelect={handleNext} 
-                                isStatic={false} 
-                            />
-                        </div>
-                    ) : (
-                        <div>
-                            <span className="nav-label">Next (None)</span>
-                            <PokemonCard 
-                                pokemon={missingNo} 
-                                onSelect={() => {}} 
-                                isStatic={true}
-                            />
-                        </div>
-                    )}
+                    <div className="sticky-nav-wrapper">
+                        {nextPokemon ? (
+                            <div>
+                                <span className="nav-label">Next</span>
+                                <PokemonCard 
+                                    pokemon={nextPokemon} 
+                                    onSelect={handleNext} 
+                                    isStatic={false} 
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <span className="nav-label">Next (None)</span>
+                                <PokemonCard 
+                                    pokemon={missingNo} 
+                                    onSelect={() => {}} 
+                                    isStatic={true}
+                                />
+                            </div>
+                        )}
+                    </div>
                 </aside>
             </div>
         </div>

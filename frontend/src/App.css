@@ -54,6 +54,11 @@
   gap: 1.5rem;
   padding: 1rem;
 
+  /* Fixed Size and Centering */
+  width: 1100px;      
+  margin: 0 auto;     
+  box-sizing: border-box; 
+
   /* Unified Visuals */
   background-color: #f8f9fa;
   border-radius: 8px;
@@ -414,8 +419,33 @@
 /* --- Top Actions --- */
 
 .detail-back-actions {
+  /* Freeze at the top of the viewport */
+  position: sticky;
+  top: 0;
+  z-index: 100; 
+
+  /* Layout & Spacing */
+  display: flex;
+  justify-content: center;
   text-align: center;
-  margin-top: 2rem;
+  padding: 2rem 0; 
+
+  /* Advanced Visuals */
+  background-color: rgba(242, 221, 221, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  width: 100%;
+}
+
+/* Internal layout for Button + Header */
+.sticky-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem; 
 }
 
 .detail-back-actions button {
@@ -428,18 +458,26 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 40px;
-  margin-top: 2rem;
 }
 
 /* --- Navigation Sidebars --- */
 
 .detail-nav-side {
   flex: 0 0 180px;
+  display: flex; 
+  flex-direction: column;
+  align-self: stretch; 
+  position: relative;
+}
+
+.sticky-nav-wrapper {
+  position: sticky;
+  top: 300px; 
   display: flex;
   flex-direction: column;
-  align-items: center;    
-  justify-content: center; 
-  text-align: center;   
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   gap: 10px;
 }
 
