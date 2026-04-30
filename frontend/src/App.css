@@ -1,7 +1,7 @@
 /* ==========  BACKGROUND  ========== */
 
 .main-background {
-  background-color: #f2dddd; 
+  background-color: #f2dddd;
   margin: 0;
   padding-top: 1rem;
   padding-bottom: 3rem;
@@ -17,7 +17,7 @@
   justify-content: center;
   align-items: center;
   margin-top: 0px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .main-logo {
@@ -25,7 +25,7 @@
   max-width: 400px;
   width: 100%;
   height: auto;
-  
+
   /* Rendering */
   image-rendering: auto;
   object-fit: contain;
@@ -55,14 +55,15 @@
   padding: 1rem;
 
   /* Fixed Size and Centering */
-  width: 1100px;      
-  margin: 0 auto;     
-  box-sizing: border-box; 
+  width: 95%;
+  max-width: 1100px;
+  margin: 0 auto;
+  box-sizing: border-box;
 
   /* Unified Visuals */
   background-color: #f8f9fa;
   border-radius: 8px;
-  
+
   /* Interaction State */
   border: 1px solid #8d8d8d;
   transition: opacity 0.3s ease;
@@ -83,11 +84,10 @@
 }
 
 /* Unified Baseline Styles */
-.toolbar-group input[type="text"], 
+.toolbar-group input[type="text"],
 .toolbar-group select,
 .type-dropdown-button,
 .search-clear,
-.pagination button,
 .btn-reset,
 .detail-back-actions button {
   height: 34px;
@@ -138,17 +138,6 @@
   color: #333;
 }
 
-/* --- Pagination --- */
-
-/* Standardizes pagination button dimensions */
-.pagination button {
-  min-width: 34px;
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* --- Checkbox Layout --- */
 
 .checkbox-wrapper {
@@ -188,7 +177,7 @@
   background: white;
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   margin-top: 2px;
   padding: 12px;
   min-width: 200px;
@@ -211,7 +200,7 @@
 
 /* ==========  INTERACTION STATES  ========== */
 
-.toolbar-group input[type="text"]:hover, 
+.toolbar-group input[type="text"]:hover,
 .toolbar-group select:hover,
 .type-dropdown-button:hover {
   border-color: #8d8d8d !important;
@@ -224,11 +213,11 @@
   cursor: pointer;
 }
 
-.toolbar-group input[type="text"]:focus, 
+.toolbar-group input[type="text"]:focus,
 .toolbar-group select:focus,
 .type-dropdown-button:focus {
   outline: none;
-  border-color: #e1838f !important; 
+  border-color: #e1838f !important;
   background-color: #ffffff !important;
   box-shadow: 0 0 0 3px rgba(225, 131, 143, 0.2);
 }
@@ -250,10 +239,9 @@
 .toolbar-group select:disabled,
 .toolbar-group button:disabled,
 .type-dropdown-button:disabled,
-.pagination button:disabled,
 .btn-reset:disabled {
   opacity: 0.5 !important;
-  pointer-events: none; 
+  pointer-events: none;
   border-color: #ccc !important;
 }
 
@@ -269,12 +257,12 @@
   display: grid;
   /* Fixed numerical count: 5 columns of equal width */
   grid-template-columns: repeat(5, 1fr);
-  justify-items: center; 
-  gap: 20px;           
-  padding: 20px;
-  
+  justify-items: center;
+  gap: 20px;
+  padding: 1rem;
+
   /* Limits the overall width of the grid */
-  max-width: 1000px; 
+  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -310,8 +298,8 @@
   border-radius: 18px;
 
   /* 3. The Layered Pixel Aesthetic */
-  box-shadow: 
-    inset 0 0 0 5px #ffffff, 
+  box-shadow:
+    inset 0 0 0 5px #ffffff,
     inset 0 0 0 7px #2d2d2d;
 }
 
@@ -331,10 +319,10 @@
 /* Prevents the pop-out and highlight effects on non-navigable cards */
 .pokemon-card:hover:not(.is-static) {
   transform: translateY(-4px);
-  box-shadow: 
-    inset 0 0 0 5px #ffffff, 
+  box-shadow:
+    inset 0 0 0 5px #ffffff,
     inset 0 0 0 7px #2d2d2d,
-    0 8px 20px rgba(0,0,0,0.12);
+    0 8px 20px rgba(0, 0, 0, 0.12);
   background-color: #eaeaea !important;
 }
 
@@ -351,7 +339,7 @@
 
 .pokemon-card-img.card-img-top {
   /* Forced Sizing */
-  max-height: 120px !important; 
+  max-height: 120px !important;
   max-width: 120px !important;
   width: auto !important;
   height: auto !important;
@@ -367,7 +355,7 @@
 .pokemon-id {
   font-size: 0.85rem;
   font-weight: bold;
-  color: #6b6b6b;         
+  color: #6b6b6b;
 }
 
 .pokemon-name {
@@ -379,30 +367,95 @@
 
 /* ==========  PAGINATION  ========== */
 
+/* Pagination Container */
 .pagination-container {
-  display: flex; 
+  display: flex;
   justify-content: center;
+}
+
+/* Pagination Button */
+
+.pagination button {
+  min-width: 40px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border: 2.5px solid #2d2d2d !important;
+  transition: background-color 0.2s ease;
 }
 
 .pagination button.active {
   background-color: #e1838f !important;
   color: white !important;
-  border-color: #808080 !important;
-  cursor: default !important; 
-  box-shadow: none !important; 
+  cursor: default !important;
 }
 
-.pagination button:hover:not(:disabled):not(.active),
-.detail-back-actions button:hover {
-  background-color: #f0f0f0 !important;
-  border-color: #8d8d8d !important;
-  color: #333 !important;
-  cursor: pointer !important;
+.pagination button:hover:not(:disabled):not(.active) {
+  background-color: #dedede !important;
 }
 
-/* Pagination group rounding logic */
-.pagination button:first-child { border-radius: 4px 0 0 4px; }
-.pagination button:last-child { border-radius: 0 4px 4px 0; }
+.pagination button:disabled {
+  background-color: #e0e0e0 !important;
+  color: #2d2d2d !important;
+  opacity: 0.5 !important;
+  pointer-events: none;
+  cursor: default;
+}
+
+.pagination button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.pagination button:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.pagination button:not(:last-child) {
+  border-right: none !important;
+}
+
+/* --- Frozen State (Home/List View) --- */
+.pagination-frozen-pane {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  width: 100%;
+
+  /* Your established frost/mask aesthetic */
+  background-color: rgba(242, 221, 221, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+/* --- Static State (Detail View) --- */
+.pagination-static-wrap {
+  /* Remove freezing and frosting to clear the gap */
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-mask-image: none;
+  mask-image: none;
+  border: none;
+}
+
+/* Ensure the pagination buttons stay centered and sharp */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  /* Keeps your existing blocky pagination style */
+}
 
 /* ==========  POKEMON-DETAIL  ========== */
 
@@ -412,8 +465,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* --- Top Actions --- */
@@ -422,13 +480,13 @@
   /* Freeze at the top of the viewport */
   position: sticky;
   top: 0;
-  z-index: 100; 
+  z-index: 100;
 
   /* Layout & Spacing */
   display: flex;
   justify-content: center;
   text-align: center;
-  padding: 2rem 0; 
+  padding: 1rem 0;
 
   /* Advanced Visuals */
   background-color: rgba(242, 221, 221, 0.85);
@@ -445,11 +503,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem; 
+  gap: 1rem;
 }
 
 .detail-back-actions button {
   border: 2.5px solid #2d2d2d;
+}
+
+.detail-back-actions button:hover {
+  background-color: #f0f0f0 !important;
+  border-color: #8d8d8d !important;
+  color: #333 !important;
+  cursor: pointer !important;
 }
 
 /* --- Primary Layout Stage --- */
@@ -464,15 +529,15 @@
 
 .detail-nav-side {
   flex: 0 0 180px;
-  display: flex; 
+  display: flex;
   flex-direction: column;
-  align-self: stretch; 
+  align-self: stretch;
   position: relative;
 }
 
 .sticky-nav-wrapper {
   position: sticky;
-  top: 300px; 
+  top: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -486,7 +551,7 @@
   font-size: 0.9rem;
   color: #888;
   text-transform: uppercase;
-  margin-bottom: 5px;     
+  margin-bottom: 5px;
 }
 
 /* --- Central Info Panel --- */
@@ -496,7 +561,7 @@
   border-radius: 12px;
   border: 1px solid #8d8d8d;
   padding: 30px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
 /* --- Sprite Showcase --- */
@@ -537,12 +602,19 @@
   z-index: 2;
 }
 
-.sprite-unit:hover img { transform: scale(1.1); }
+.sprite-unit:hover img {
+  transform: scale(1.1);
+}
 
 /* --- Evolution Chain Specifics --- */
 
-.evolution-chain-container .sprite-unit p { transition: color 0.3s ease; }
-.evolution-chain-container .sprite-unit:hover p { color: #888; }
+.evolution-chain-container .sprite-unit p {
+  transition: color 0.3s ease;
+}
+
+.evolution-chain-container .sprite-unit:hover p {
+  color: #888;
+}
 
 /* Backdrop circle for evolution sprites */
 .evolution-chain-container .sprite-unit::before {
@@ -583,7 +655,9 @@
   margin-top: 20px;
 }
 
-.flex-1 { flex: 1; }
+.flex-1 {
+  flex: 1;
+}
 
 .detail-main-panel .badge-container {
   display: flex;
@@ -625,17 +699,17 @@
   opacity: 1 !important;
   letter-spacing: 0.3px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  text-shadow: 
-    -1px -1px 0 rgba(0, 0, 0, 0.2),  
-     1px -1px 0 rgba(0, 0, 0, 0.2),
-    -1px  1px 0 rgba(0, 0, 0, 0.2),
-     1px  1px 0 rgba(0, 0, 0, 0.2);
+  text-shadow:
+    -1px -1px 0 rgba(0, 0, 0, 0.2),
+    1px -1px 0 rgba(0, 0, 0, 0.2),
+    -1px 1px 0 rgba(0, 0, 0, 0.2),
+    1px 1px 0 rgba(0, 0, 0, 0.2);
 }
 
 /* --- Neutral/Empty State Badge --- */
 .badge.type-tag-none {
   background-color: #e9ecef !important;
-  color: #495057 !important;            
+  color: #495057 !important;
   border: 1px solid #adb5bd !important;
   text-shadow: none !important;
   box-shadow: none !important;
@@ -646,20 +720,127 @@
 
 /* --- Type Mapping --- */
 
-.badge.type-tag-normal { background-color: #A8A878 !important; }
-.badge.type-tag-fire { background-color: #F08030 !important; }
-.badge.type-tag-water { background-color: #6890F0 !important; }
-.badge.type-tag-electric { background-color: #F8D030 !important; }
-.badge.type-tag-grass { background-color: #78C850 !important; }
-.badge.type-tag-ice { background-color: #98D8D8 !important; }
-.badge.type-tag-fighting { background-color: #C03028 !important; }
-.badge.type-tag-poison { background-color: #A040A0 !important; }
-.badge.type-tag-ground { background-color: #E0C068 !important; }
-.badge.type-tag-flying { background-color: #A890F0 !important; }
-.badge.type-tag-psychic { background-color: #F85888 !important; }
-.badge.type-tag-bug { background-color: #A8B820 !important; }
-.badge.type-tag-rock { background-color: #B8A038 !important; }
-.badge.type-tag-ghost { background-color: #705898 !important; }
-.badge.type-tag-dragon { background-color: #7038F8 !important; }
-.badge.type-tag-steel { background-color: #B8B8D0 !important; }
-.badge.type-tag-dark { background-color: #705848 !important; }
+.badge.type-tag-normal {
+  background-color: #A8A878 !important;
+}
+
+.badge.type-tag-fire {
+  background-color: #F08030 !important;
+}
+
+.badge.type-tag-water {
+  background-color: #6890F0 !important;
+}
+
+.badge.type-tag-electric {
+  background-color: #F8D030 !important;
+}
+
+.badge.type-tag-grass {
+  background-color: #78C850 !important;
+}
+
+.badge.type-tag-ice {
+  background-color: #98D8D8 !important;
+}
+
+.badge.type-tag-fighting {
+  background-color: #C03028 !important;
+}
+
+.badge.type-tag-poison {
+  background-color: #A040A0 !important;
+}
+
+.badge.type-tag-ground {
+  background-color: #E0C068 !important;
+}
+
+.badge.type-tag-flying {
+  background-color: #A890F0 !important;
+}
+
+.badge.type-tag-psychic {
+  background-color: #F85888 !important;
+}
+
+.badge.type-tag-bug {
+  background-color: #A8B820 !important;
+}
+
+.badge.type-tag-rock {
+  background-color: #B8A038 !important;
+}
+
+.badge.type-tag-ghost {
+  background-color: #705898 !important;
+}
+
+.badge.type-tag-dragon {
+  background-color: #7038F8 !important;
+}
+
+.badge.type-tag-steel {
+  background-color: #B8B8D0 !important;
+}
+
+.badge.type-tag-dark {
+  background-color: #705848 !important;
+}
+
+/* ==========  MOBILE-FRIENDLINESS  ========== */
+
+@media screen and (max-width: 768px) {
+
+  /* --- Logo --- */
+  .main-logo {
+    /* Remove blue tap overlay on mobile */
+    -webkit-tap-highlight-color: transparent !important;
+    /* Prevent "Callout" (Save Image) popups on long-press */
+    -webkit-touch-callout: none !important;
+    /* Disable user selection of the image */
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    /* Disable default drag behaviors */
+    -webkit-user-drag: none !important;
+    /* Ensure it doesn't trigger a focus state */
+    outline: none !important;
+  }
+
+  /* --- Toolbar --- */
+
+  .toolbar-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .toolbar-group,
+  .type-dropdown-button {
+    width: 100%;
+  }
+
+  .checkbox-wrapper {
+    justify-content: flex-start !important;
+    gap: 12px;
+    height: auto;
+    padding: 10px;
+  }
+
+  /* --- Pokemon Grid --- */
+  .pokemon-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 10px;
+  }
+}
+
+/* --- Item Selection --- */
+.pokemon-card,
+.type-dropdown-button,
+button {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  touch-action: manipulation;
+}

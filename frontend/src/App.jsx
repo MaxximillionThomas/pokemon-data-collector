@@ -294,9 +294,8 @@ function App() {
           />
         </div>
 
+        {/* Toolbar */}
         <div className="controls-wrapper primary-border">
-
-          {/* Toolbar */}
           <Toolbar
             query={query}
             setQuery={(val) => updateParams({ q: val, page: 1 })}
@@ -317,8 +316,10 @@ function App() {
 
             disabled={selectedPokemon ? true : false}
           />
+        </div>
 
-          {/* Page controls */}
+        {/* Page controls */}
+        <div className={!selectedPokemon ? "pagination-frozen-pane" : "pagination-static-wrap"}>
           <nav className="pagination-container">
             <ul className="pagination">
               <button
