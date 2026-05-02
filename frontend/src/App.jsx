@@ -295,7 +295,7 @@ function App() {
         </div>
 
         {/* Toolbar */}
-        <div className="controls-wrapper primary-border">
+        <div className={`controls-wrapper primary-border ${selectedPokemon ? 'controls-wrapper-disabled' : ''}`}>
           <Toolbar
             query={query}
             setQuery={(val) => updateParams({ q: val, page: 1 })}

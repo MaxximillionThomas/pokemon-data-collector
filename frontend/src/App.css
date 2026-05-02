@@ -35,7 +35,7 @@
 
 /* Utility for high-visibility boundaries */
 .primary-border {
-  border: 2px solid #8d8d8d !important;
+  border: 2px solid #2d2d2d !important;
 }
 
 /* Unified panel utility for consistent 2.5px handheld frames */
@@ -65,13 +65,19 @@
   border-radius: 8px;
 
   /* Interaction State */
-  border: 1px solid #8d8d8d;
   transition: opacity 0.3s ease;
 }
 
+.controls-wrapper-disabled {
+  border-color: #8d8d8d !important;
+  transition: border-color 0.3s ease, opacity 0.3s ease;
+}
+
 .controls-wrapper.is-disabled {
+  border-color: #8d8d8d !important;
   opacity: 0.5;
   pointer-events: none;
+  transition: border-color 0.3s ease, opacity 0.3s ease;
 }
 
 /* ==========  TOOLBAR & ACTION ELEMENTS  ========== */
@@ -95,7 +101,7 @@
   border-radius: 4px;
   background-color: #fbfbfb;
   box-sizing: border-box;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 /* Group Layouts */
@@ -288,7 +294,7 @@
   cursor: pointer;
   margin-top: 40px;
   overflow: visible !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   /* 1. Background */
   background-color: #fbfbfb !important;
@@ -383,7 +389,7 @@
   justify-content: center;
   background-color: #f8f9fa;
   border: 2.5px solid #2d2d2d !important;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .pagination button.active {
@@ -397,7 +403,6 @@
 }
 
 .pagination button:disabled {
-  background-color: #e0e0e0 !important;
   color: #2d2d2d !important;
   opacity: 0.5 !important;
   pointer-events: none;
@@ -426,10 +431,10 @@
   padding-top: 1rem;
   width: 100%;
 
-  /* Your established frost/mask aesthetic */
+  /* Advanced Visuals */
   background-color: rgba(242, 221, 221, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
   border-bottom: 1px solid rgba(0, 0, 0, 0.03);
@@ -490,8 +495,8 @@
 
   /* Advanced Visuals */
   background-color: rgba(242, 221, 221, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
   border-bottom: 1px solid rgba(0, 0, 0, 0.03);
@@ -558,8 +563,8 @@
 .detail-main-panel {
   flex: 1;
   background-color: #fbfbfb;
-  border-radius: 12px;
-  border: 1px solid #8d8d8d;
+  border: 2.5px solid #2d2d2d !important;
+  border-radius: 18px;
   padding: 30px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
@@ -788,11 +793,28 @@
   background-color: #705848 !important;
 }
 
-/* ==========  MOBILE-FRIENDLINESS  ========== */
+
+
+
+
+/* =========================================== 
+   ==========  MOBILE-FRIENDLINESS  ========== 
+   =========================================== */
 
 @media screen and (max-width: 768px) {
 
-  /* --- Logo --- */
+  /* ==========  GENERAL  ========== */
+  .pokemon-card,
+  .sprite-unit,
+  .type-dropdown-button,
+  button {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    touch-action: manipulation;
+  }
+
+  /* ==========  LOGO  ========== */
   .main-logo {
     /* Remove blue tap overlay on mobile */
     -webkit-tap-highlight-color: transparent !important;
@@ -807,7 +829,7 @@
     outline: none !important;
   }
 
-  /* --- Toolbar --- */
+  /* ==========  TOOLBAR  ========== */
 
   .toolbar-container {
     flex-direction: column;
@@ -827,20 +849,99 @@
     padding: 10px;
   }
 
-  /* --- Pokemon Grid --- */
+  /* ==========  LIST-VIEW  ========== */
   .pokemon-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
     padding: 10px;
   }
-}
 
-/* --- Item Selection --- */
-.pokemon-card,
-.type-dropdown-button,
-button {
-  -webkit-tap-highlight-color: transparent !important;
-  -webkit-user-select: none !important;
-  user-select: none !important;
-  touch-action: manipulation;
+  /* ==========  DETAIL-VIEW CARDS  ========== */
+
+  .detail-nav-side {
+    /* Dimensions and positioning */
+    position: fixed;
+    bottom: 0;
+    z-index: 200;
+    margin: 0 !important;
+    /* Fixed height for the dock */
+    height: 250px;
+    /* Each takes half the screen */
+    width: 50% !important;
+
+    /* Content Display */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-end !important;
+
+    /* Advanced Visuals */
+    background-color: rgba(242, 221, 221, 0.85);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    -webkit-mask-image: linear-gradient(to top, black 90%, transparent 100%);
+    mask-image: linear-gradient(to top, black 90%, transparent 100%);
+    border-top: 1px solid rgba(0, 0, 0, 0.03);
+  }
+
+  /* Previous Card */
+  .detail-nav-side:first-of-type {
+    left: 0;
+    justify-content: flex-end !important;
+    padding-left: 45px;
+  }
+
+  /* Next Card */
+  .detail-nav-side:last-of-type {
+    right: 0;
+    left: auto !important;
+    justify-content: flex-end !important;
+    padding-right: 45px;
+  }
+
+  .detail-nav-side .sticky-nav-wrapper {
+    position: relative !important;
+    top: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100% !important;
+    max-width: 100%;
+  }
+
+  /* Card polish */
+
+  .detail-nav-side .pokemon-card {
+    transform: scale(0.70);
+    margin: 0 0 10px 0 !important;
+  }
+
+  .detail-nav-side .pokemon-card:hover:not(.is-static) {
+    transform: scale(0.8) translateY(-5px) !important;
+  }
+
+  .detail-nav-side .pokemon-card:active:not(.is-static) {
+    transform: scale(0.70) translateY(0px) !important;
+  }
+
+  /* Ensure main panel scrolls behind the new dock */
+  .detail-main-panel {
+    margin-bottom: 210px !important;
+  }
+
+  /* ==========  DETAIL-VIEW MAIN  ========== */
+
+  .detail-main-panel {
+    width: 95% !important;
+    margin: 0 auto 210px auto !important;
+    padding: 20px !important;
+    box-sizing: border-box;
+  }
+
+  /* Ensure the stage doesn't force it to one side */
+  .detail-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
 }
