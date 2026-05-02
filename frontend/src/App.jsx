@@ -200,8 +200,8 @@ function App() {
   // Autodismiss the fetch progress message after all data has been fetched
   useEffect(() => {
     if (pokemonArray.length === totalPokemon) {
-      // In 3 seconds, hide the progress message
-      const timer = setTimeout(() => setShowProgress(false), 3000);
+      // In 2 seconds, hide the progress message
+      const timer = setTimeout(() => setShowProgress(false), 2000);
       // Clean up the timer
       return () => clearTimeout(timer);
     }
@@ -363,7 +363,17 @@ function App() {
 
         {/* Fetch progress message */}
         {showProgress && (
-          <div>{pokemonArray.length} of {totalPokemon} Pokémon processed.</div>
+          <div className="progress-container">
+            <div className="progress-bar-wrap">
+              <div 
+                className="progress-fill" 
+                style={{ width: `${(pokemonArray.length / totalPokemon) * 100}%` }}
+              />
+              <span className="progress-text">
+                {pokemonArray.length} of {totalPokemon} Pokémon processed.
+              </span>
+            </div>
+          </div>
         )}
 
         {/* Results */}
