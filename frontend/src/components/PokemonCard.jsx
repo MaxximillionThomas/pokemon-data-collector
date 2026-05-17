@@ -25,7 +25,18 @@ export function PokemonCard({ pokemon, onSelect, isShiny, isStatic }) {
     const cardClass = `pokemon-card ${isStatic ? 'is-static' : ''}`;
 
     return (
-        <Card className={cardClass} onClick={isStatic ? null : () => onSelect(pokemon)} >
+        <Card 
+            className={cardClass} 
+            onClick={isStatic ? null : () => onSelect(pokemon)} 
+            tabIndex={isStatic ? -1 : 0} 
+            onKeyDown={(e) => {
+                if (isStatic) return;
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault(); 
+                    onSelect(pokemon);
+                }
+            }}
+        >
 
             {/* Sprite container */}
             <div className="pokemon-sprite-container">

@@ -1,3 +1,12 @@
+/* ==========  FOCUS (ACCESSIBILITY)  ========== */
+
+:focus-visible {
+  outline: none !important;
+  border-color: #e1838f !important;
+  box-shadow: 0 0 0 3px rgba(225, 131, 143, 0.4) !important;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
 /* ==========  BACKGROUND  ========== */
 
 .main-background {
@@ -406,6 +415,23 @@
   image-rendering: pixelated;
   position: relative;
   z-index: 5;
+}
+
+/* Custom focus indicator */
+
+.pokemon-card:focus-visible:not(.is-static) {
+  outline: none !important;
+  box-shadow:
+    inset 0 0 0 5px #ffffff,
+    inset 0 0 0 7px #2d2d2d,
+    0 8px 20px rgba(0, 0, 0, 0.12) !important;
+  background-color: #eaeaea !important;
+  transform: translateY(-4px);
+}
+
+.pokemon-card:focus-visible:not(.is-static) .pokemon-card-img.card-img-top {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
 }
 
 /* --- Typography Polish --- */
