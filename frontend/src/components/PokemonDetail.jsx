@@ -328,7 +328,7 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                     {/* Evolution chain */}
                     <section className="mt-4">
                         <h3 className="detail-section-title">Evolution Chain</h3>
-                        <div className="evolution-chain-container d-flex justify-content-center gap-4">
+                        <div className="evolution-chain-container sprite-row d-flex justify-content-center">
                             {evoChain.map((evo) => {
                                 const evoData = pokemonArray.find(p => p.id === evo.id);
 
@@ -354,7 +354,7 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
                     {/* Type Matchups */}
                     <h2 className="detail-section-title">Type Matchups</h2>
                     <section className="mt-4 mb-3">
-                        <div className="detail-info-row align-items-stretch">
+                        <div className="detail-info-row align-items-stretch matchup-row">
 
                             {/* Weaknesses */}
                             <div className="info-item flex-1">
