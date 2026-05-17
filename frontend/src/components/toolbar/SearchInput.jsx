@@ -17,10 +17,11 @@
 export default function SearchInput({ query, setQuery, disabled }) {
     return (
       <div className="toolbar-group">
-        <label>Search Pokémon:</label>
+        <label htmlFor="search-query">Search Pokémon:</label>
 
         <div className="d-flex">
           <input
+            id="search-query"
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -29,9 +30,11 @@ export default function SearchInput({ query, setQuery, disabled }) {
           />
 
           <button 
+            type="button"
             className="search-clear"
             onClick={() => setQuery('')} 
             disabled={disabled}
+            aria-label="Clear search input"
           >
             Clear
           </button>

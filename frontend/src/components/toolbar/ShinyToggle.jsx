@@ -17,10 +17,11 @@
 export default function ShinyToggle({ isShiny, setIsShiny, disabled }) {
     return (
         <div className="toolbar-group align-items-start">
-            <label>Shiny Sprites:</label>
+            <label htmlFor="shiny-toggle">Shiny Sprites:</label>
 
             <div className="checkbox-wrapper">
                 <input 
+                    id="shiny-toggle"
                     type="checkbox"
                     checked={isShiny}
                     onChange={(e) => {setIsShiny(e.target.checked)}}

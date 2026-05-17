@@ -27,6 +27,8 @@ export function PokemonCard({ pokemon, onSelect, isShiny, isStatic }) {
     return (
         <Card 
             className={cardClass} 
+            role={isStatic ? undefined : 'button'}
+            aria-label={isStatic ? undefined : `View details for ${pokemon.name}`}
             onClick={isStatic ? null : () => onSelect(pokemon)} 
             tabIndex={isStatic ? -1 : 0} 
             onKeyDown={(e) => {

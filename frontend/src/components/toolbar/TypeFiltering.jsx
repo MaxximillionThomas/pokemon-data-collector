@@ -93,22 +93,34 @@ export default function TypeFiltering({ selectedTypes, setSelectedTypes, disable
 
     return (
         <div className="toolbar-group" ref={dropdownRef}>
-            <label>Filter Types:</label>
+            <label id="type-filter-label">Filter Types:</label>
 
             {/* Dropdown button */}
             <button 
                 type="button"
+                id="type-dropdown-button"
                 className="type-dropdown-button text-capitalize"
-                onClick={() => setTypesExpanded(!typesExpanded)}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setTypesExpanded(!typesExpanded);
+                }}
+                onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                        setTypesExpanded(false);
+                    }
+                }}
                 disabled={disabled}
+                aria-expanded={typesExpanded}
+                aria-haspopup="listbox"
+                aria-labelledby="type-filter-label type-dropdown-button"
             >
                 {getDisplayText()}
-                <span>{typesExpanded ? '▲' : '▼'}</span>
+                <span aria-hidden="true">{typesExpanded ? '▲' : '▼'}</span>
             </button>
 
             {/* Render expanded view only when active */}
             {typesExpanded && (
-                <div className="type-dropdown-content">
+                <div className="type-dropdown-content" role="listbox" aria-label="Pokemon types">
                     <div className="type-grid">
 
                         {ALL_TYPES.map(type => (

@@ -320,9 +320,10 @@ function App() {
 
         {/* Page controls */}
         <div className={!selectedPokemon ? "pagination-frozen-pane" : "pagination-static-wrap"}>
-          <nav className="pagination-container">
+          <nav className="pagination-container" aria-label="Pagination">
             <ul className="pagination">
               <button
+                type="button"
                 onClick={() => {
                   const prevPage = currentPage - 1;
                   updateParams({ page: Math.max(prevPage, 1) });
@@ -335,6 +336,7 @@ function App() {
 
               {pageNumbers.map(page => (
                 <button
+                  type="button"
                   key={page}
                   onClick={() => {
                     updateParams({ page: page });
@@ -348,6 +350,7 @@ function App() {
               ))}
 
               <button
+                type="button"
                 onClick={() => {
                   const nextPage = Number(currentPage) + 1;
                   updateParams({ page: Math.min(nextPage, totalPages) });
@@ -363,7 +366,7 @@ function App() {
 
         {/* Fetch progress message */}
         {showProgress && (
-          <div className="progress-container">
+          <div className="progress-container" role="status" aria-live="polite" aria-atomic="true">
             <div className="progress-bar-wrap">
               <div 
                 className="progress-fill" 
@@ -379,11 +382,11 @@ function App() {
         {/* Results */}
         {loading ? (
           // Display loading message until fetch (partially) complete
-          <p>Fetching data...</p>
+          <p role="status">Fetching data...</p>
 
         // Fetch failure
         ) : fetchSuccess === false ? (
-          <p>Failed to fetch Pokemon data.</p>
+          <p role="alert">Failed to fetch Pokemon data.</p>
 
         // Detail page
         ) : selectedPokemon ? (

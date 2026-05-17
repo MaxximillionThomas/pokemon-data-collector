@@ -19,11 +19,12 @@
 export default function SortControls({ sortKey, setSortKey, sortDir, setSortDir, disabled }) {
     return (
         <div className="toolbar-group">
-            <label>Sort By:</label>
+            <label htmlFor="sort-key-select">Sort By:</label>
 
             <div className="d-flex gap-1">
                 {/* Sort Key */}
                 <select 
+                    id="sort-key-select"
                     value={sortKey} 
                     onChange={(e) => setSortKey(e.target.value)} 
                     disabled={disabled}
@@ -34,6 +35,7 @@ export default function SortControls({ sortKey, setSortKey, sortDir, setSortDir,
                 
                 {/* Sort Dir */}
                 <select 
+                    id="sort-dir-select"
                     value={sortDir} 
                     onChange={(e) => setSortDir(e.target.value)}
                     disabled={disabled}

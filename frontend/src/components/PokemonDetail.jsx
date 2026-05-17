@@ -224,7 +224,7 @@ export function PokemonDetail({ pokemon, pokemonArray, displayedPokemon, onSelec
             {/* Overview button */}
             <div className="detail-back-actions">
                 <div className="sticky-header-content">
-                    <button onClick={() => onSelect(null)} >
+                    <button type="button" onClick={() => onSelect(null)} >
                         ← BACK TO OVERVIEW
                     </button>
 

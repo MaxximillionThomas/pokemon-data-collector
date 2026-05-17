@@ -17,6 +17,7 @@ export default function ResetButton({ resetSearchParams, disabled }) {
     return (
       <div className="toolbar-group justify-content-end">
         <button 
+          type="button"
           className="btn-reset"
           onClick={resetSearchParams}
           disabled={disabled}
