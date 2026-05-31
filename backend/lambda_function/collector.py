@@ -7,7 +7,7 @@ Author:         Maxximillion Thomas
 Date:           February 28, 2026
 """
 
-import requests
+import urllib.request
 import json
 import boto3
 import time
@@ -15,8 +15,12 @@ import time
 # ==========  Declarations  ==========
 
 # Define the S3 session constants
-SESSION = boto3.Session(profile_name='pokemon-writer')
-S3 = SESSION.client('s3')
+try:
+    SESSION = boto3.Session(profile_name='pokemon-writer')
+    S3 = SESSION.client('s3')
+except Exception:
+    S3 = boto3.client('s3')
+
 BUCKET_NAME = 'pokemon-data-collector-s3'
 
 # ==========  Functions  ==========
@@ -28,18 +32,17 @@ def fetch_pokemon_data(pokemon_id):
     # Inject the target pokemon into the pokeapi link
     main_url = f'https://pokeapi.co/api/v2/pokemon/{pokemon_id}'
 
-    # Request the data, attempting to parse the response and map it to desired pairs
     try:
         # Primary fetch (main data)
-        main_response = requests.get(main_url)
-        main_response.raise_for_status()
-        main_data = main_response.json()
+        req_main = urllib.request.Request(main_url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req_main, timeout=10) as response:
+            main_data = json.loads(response.read().decode('utf-8'))
         
         # Secondary fetch (species data)
         species_url = main_data['species']['url']
-        species_response = requests.get(species_url)
-        species_response.raise_for_status()
-        species_data = species_response.json()
+        req_species = urllib.request.Request(species_url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req_species, timeout=10) as response:
+            species_data = json.loads(response.read().decode('utf-8'))
 
         # Target FireRed/LeafGreen sprites
         frlg_sprites = main_data['sprites']['versions']['generation-iii']['firered-leafgreen']
@@ -83,7 +86,8 @@ def cloud_pipeline(pokemon_id, data):
             Bucket=BUCKET_NAME,
             Key=file_name,
             Body=json.dumps(data),
-            ContentType='application/json'
+            ContentType='application/json',
+            CacheControl='max-age=3600'  
         )
         print(f'Successfully saved {file_name} to {BUCKET_NAME}.')
 
@@ -121,5 +125,3 @@ if __name__ == '__main__':
     # data = fetch_pokemon_data(6)
     # for key,value in data.items():
     #     print(f'{key}: {value}')
-    
-
